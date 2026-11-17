@@ -1,0 +1,102 @@
+# Dependencies and package-manager state
+node_modules/
+.pnp
+.pnp.js
+.pnp.cjs
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Production and generated builds
+dist/
+dist-ssr/
+build/
+out/
+storybook-static/
+*.tsbuildinfo
+vite.config.*.timestamp-*
+
+# Test and coverage output
+coverage/
+.nyc_output/
+.vitest/
+playwright-report/
+blob-report/
+test-results/
+junit.xml
+
+# Tool caches
+.vite/
+.vite-inspect/
+.cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+.stylelintcache
+.prettier-cache
+
+# Logs and diagnostic reports
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Local environment and secret-bearing configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+
+# Temporary files
+.tmp/
+.temp/
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Editor and IDE state
+.idea/
+.fleet/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Operating-system metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local deployment-provider state
+.vercel/
+.netlify/
+
+# Miscellaneous generated artifacts
+stats.html
+*.lcov
