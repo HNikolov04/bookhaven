@@ -14,13 +14,11 @@ export function HeroSection() {
     <section className="hero-section">
       <div className="page-container grid items-center gap-10 md:grid-cols-2 lg:gap-16">
         <div className="hero-copy">
-          <span className="section-kicker">Your next chapter starts here</span>
           <h1>
             Welcome to <span>BookHaven</span>
           </h1>
           <p>
-            Discover remarkable books, save the stories you love, and keep every
-            reading journey in one welcoming place.
+            Discover, read and keep track of the books you love — all in one place.
           </p>
           <div className="hero-actions">
             <Button
@@ -36,11 +34,6 @@ export function HeroSection() {
               My library
             </Button>
           </div>
-          <div className="hero-proof" aria-label="BookHaven benefits">
-            <span><strong>Free</strong> to explore</span>
-            <span><strong>Real</strong> library data</span>
-            <span><strong>Yours</strong> to organize</span>
-          </div>
         </div>
 
         <div
@@ -48,8 +41,8 @@ export function HeroSection() {
           className="hero-illustration"
           role="img"
         >
-          <span className="hero-spark hero-spark--one">✦</span>
-          <span className="hero-spark hero-spark--two">✦</span>
+          <span className="hero-spark hero-spark--one">&#10022;</span>
+          <span className="hero-spark hero-spark--two">&#10022;</span>
           <div className="hero-steam"><i /><i /></div>
           <div className="hero-cup"><span /></div>
           <div className="hero-plant">

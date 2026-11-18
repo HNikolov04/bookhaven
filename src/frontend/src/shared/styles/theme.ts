@@ -13,19 +13,19 @@ export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1e3a5f',
+      main: '#454545',
     },
     secondary: {
-      main: '#e07a5f',
+      main: '#ed6b3a',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f6faff',
+      default: '#f4f4f4',
       paper: '#ffffff',
     },
     text: {
-      primary: '#172033',
-      secondary: '#5f6b7a',
+      primary: '#252525',
+      secondary: '#696969',
     },
   },
   typography: {
@@ -36,7 +36,7 @@ export const theme = createTheme({
     button: { fontWeight: 700 },
   },
   shape: {
-    borderRadius: 14,
+    borderRadius: 5,
   },
   components: {
     MuiButton: {
@@ -45,7 +45,7 @@ export const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 5,
           minHeight: 44,
           paddingInline: 20,
           textTransform: 'none',

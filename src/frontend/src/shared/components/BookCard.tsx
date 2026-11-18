@@ -1,18 +1,18 @@
 import { IconButton } from '@mui/material'
 import { Link } from 'react-router'
-import { useFavorites } from '../../features/favorites/useFavorites'
 import type { BookSummary } from '../../features/books/types'
+import { useMyLibrary } from '../../features/library/useMyLibrary'
 import { getBookCoverUrl } from '../utils/bookMappers'
 
 type BookCardProps = {
   book: BookSummary
 }
 
-function HeartIcon({ filled }: { filled: boolean }) {
+function LibraryBookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24">
       <path
-        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
+        d="M6 3h12v18l-6-4-6 4V3Z"
         fill={filled ? 'currentColor' : 'none'}
         stroke="currentColor"
         strokeLinecap="round"
@@ -24,8 +24,8 @@ function HeartIcon({ filled }: { filled: boolean }) {
 }
 
 export function BookCard({ book }: BookCardProps) {
-  const { isFavorite, toggleFavorite } = useFavorites()
-  const isBookFavorite = isFavorite(book.id)
+  const { isInLibrary, toggleBook } = useMyLibrary()
+  const isBookInLibrary = isInLibrary(book.id)
 
   return (
     <article className="book-card">
@@ -47,15 +47,15 @@ export function BookCard({ book }: BookCardProps) {
         )}
         <IconButton
           aria-label={
-            isBookFavorite
-              ? `Remove ${book.title} from favorites`
-              : `Add ${book.title} to favorites`
+            isBookInLibrary
+              ? `Remove ${book.title} from My Library`
+              : `Add ${book.title} to My Library`
           }
-          className="favorite-button"
-          onClick={() => toggleFavorite(book)}
+          className="library-button"
+          onClick={() => toggleBook(book)}
           size="small"
         >
-          <HeartIcon filled={isBookFavorite} />
+          <LibraryBookmarkIcon filled={isBookInLibrary} />
         </IconButton>
       </div>
       <div className="book-card__content">

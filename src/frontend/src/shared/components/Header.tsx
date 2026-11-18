@@ -7,13 +7,12 @@ import {
   Toolbar,
 } from '@mui/material'
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router'
+import { NavLink } from 'react-router'
 
 const navigation = [
   { label: 'Home', to: '/' },
   { label: 'Catalog', to: '/books' },
   { label: 'My Library', to: '/my-library' },
-  { label: 'Favorites', to: '/favorites' },
 ]
 
 function BookHavenMark() {
@@ -35,21 +34,12 @@ function MenuIcon() {
   )
 }
 
-function SearchIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="6" />
-      <path d="m16 16 4 4" />
-    </svg>
-  )
-}
-
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <AppBar className="site-header" color="transparent" elevation={0} position="sticky">
-      <Toolbar className="site-header__inner page-container" disableGutters>
+      <Toolbar className="site-header__inner" disableGutters>
         <NavLink aria-label="BookHaven home" className="brand" to="/">
           <BookHavenMark />
           <span>BookHaven</span>
@@ -71,14 +61,6 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <IconButton
-            aria-label="Search books"
-            className="header-icon-button"
-            component={Link}
-            to="/books"
-          >
-            <SearchIcon />
-          </IconButton>
           <IconButton
             aria-label="Open navigation"
             className="header-icon-button mobile-menu-button"

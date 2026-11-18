@@ -22,13 +22,6 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: 'favorites',
-        lazy: async () => {
-          const { FavoritesPage } = await import('../features/favorites/FavoritesPage')
-          return { Component: FavoritesPage }
-        },
-      },
-      {
         path: 'my-library',
         lazy: async () => {
           const { MyLibraryPage } = await import('../features/library/MyLibraryPage')

@@ -14,7 +14,7 @@ export function FeaturedBooks() {
       <div className="page-container">
         <div className="section-title-row">
           <div>
-            <span className="section-kicker">Reader favorites</span>
+            <span className="section-kicker">Popular reads</span>
             <h2 className="section-heading" id="featured-heading">Featured books</h2>
             <p className="muted-copy">A fresh shelf of timeless fiction to begin with.</p>
           </div>

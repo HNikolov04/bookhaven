@@ -8,8 +8,8 @@ architecturally significant decisions in `docs/adr/` instead.
 
 - BookHaven is a frontend-only university coursework application.
 - Open Library is the only remote book-data source.
-- Favorites, reading status, and personal reviews belong to the current browser
-  and are persisted in LocalStorage.
+- My Library membership, reading status, and personal reviews belong to the
+  current browser and are persisted in LocalStorage.
 - There is no authentication, backend, database, or simulated server.
 - Prefer code that is easy to demonstrate and explain over abstractions that are
   only justified by hypothetical future requirements.
@@ -38,9 +38,6 @@ src/
       api/
       hooks/
       types.ts
-    favorites/
-      FavoritesPage.tsx
-      useFavorites.ts
     library/
       MyLibraryPage.tsx
       ReviewForm.tsx
@@ -78,7 +75,7 @@ Rules:
 | Non-React module | camelCase | `bookMapper.ts` |
 | Type/interface | PascalCase | `BookSummary` |
 | Constant | `UPPER_SNAKE_CASE` | `BOOKS_PAGE_SIZE` |
-| Boolean | `is`, `has`, `can`, or `should` prefix | `isFavorite` |
+| Boolean | `is`, `has`, `can`, or `should` prefix | `isInLibrary` |
 | Event handler prop | `on...` | `onStatusChange` |
 | Internal event handler | `handle...` | `handleStatusChange` |
 | CSS class | Tailwind utility or kebab-case custom class | `book-card` |
@@ -86,7 +83,7 @@ Rules:
 - Use named exports for application modules. A route lazy-loading constraint is
   an acceptable reason for a default export.
 - Name query hooks with the `Query` suffix and local data hooks after the user
-  action/domain, for example `useBookDetailsQuery` and `useFavorites`.
+  action/domain, for example `useBookDetailsQuery` and `useMyLibrary`.
 - Use the Open Library work ID without `/works/` as the canonical `bookId`, for
   example `OL45804W`.
 
@@ -135,7 +132,6 @@ Routes:
 | `/` | Home |
 | `/books` | Catalog |
 | `/books/:id` | Book details |
-| `/favorites` | Favorites |
 | `/my-library` | My Library |
 | `*` | Not found |
 
@@ -250,30 +246,22 @@ Query, fake promises, or mutations.
 
 Expose reusable synchronous hooks backed by a small typed storage adapter:
 
-- `useFavorites()`
-- `useLibrary()`
+- `useMyLibrary()`
 - `useReviews()` only if review behavior grows beyond the library hook
 
 Storage keys are versioned and namespaced:
 
 ```text
-bookhaven.favorites.v1
 bookhaven.library.v1
 ```
 
-Store a normalized `BookSummary` snapshot with each favorite/library item. This
-keeps these pages useful after refresh without issuing one remote request per
-saved book. Fresh remote detail data may replace a snapshot when the user opens
-that book.
+Store a normalized `BookSummary` snapshot with each My Library item. This keeps
+the page useful after refresh without issuing one remote request per saved book.
+Fresh remote detail data may replace a snapshot when the user opens that book.
 
 Conceptual persisted shapes:
 
 ```ts
-type FavoriteRecord = {
-  book: BookSummary;
-  createdAt: string;
-};
-
 type LibraryRecord = {
   book: BookSummary;
   status: ReadingStatus;
@@ -298,7 +286,8 @@ type PersonalReview = {
 - Keep state synchronized across tabs using the browser `storage` event.
 - UI actions update React state and LocalStorage together through the hook API.
 - Do not persist transient UI state such as dialogs, search input, or loading.
-- Removing a favorite does not remove a My Library entry, and vice versa.
+- My Library is the only saved-book collection; do not introduce a parallel
+  favorites collection or storage key.
 
 ## 9. Styling and design system
 
@@ -322,16 +311,16 @@ Spacing, radius, and other non-color properties do not use the `--ink-` prefix.
 
 ```css
 :root {
-  --ink-primary: #1e3a5f;
-  --ink-accent: #e07a5f;
+  --ink-primary: #454545;
+  --ink-accent: #ed6b3a;
   --ink-background: #ffffff;
-  --ink-background-soft: #eef6ff;
+  --ink-background-soft: #f4f4f4;
   --ink-surface: #ffffff;
-  --ink-text: #172033;
-  --ink-text-muted: #5f6b7a;
-  --ink-border: #c9d8e8;
-  --ink-focus: #1e3a5f;
-  --card-radius: 14px;
+  --ink-text: #252525;
+  --ink-text-muted: #6a6a6a;
+  --ink-border: #c7c7c7;
+  --ink-focus: #454545;
+  --card-radius: 5px;
 }
 ```
 
@@ -340,8 +329,10 @@ Spacing, radius, and other non-color properties do not use the `--ink-` prefix.
 - Headings `h1`-`h3` use Fraunces; body copy and controls use Inter.
 - Prefer self-hosted `@fontsource` packages so typography does not depend on a
   runtime font request.
-- Cards use a `14px` radius and the established dashed bottom-border motif.
-- Primary actions use the accent color; navigation and strong text use navy.
+- Cards and controls use a restrained `5px` radius; large pill-shaped containers
+  are avoided unless the element is inherently circular.
+- Primary actions use orange; navigation, borders, and strong text use neutral
+  charcoal and gray.
 - A component may use the accent as a highlight, but never rely on color alone to
   communicate status or selection.
 - Reuse existing BookHaven logo assets when present. Do not redraw or replace a
@@ -393,7 +384,7 @@ Testing should prioritize behavior that carries product risk:
 - Catalog URL parameter parsing and query construction.
 - Query hooks with mocked HTTP responses.
 - LocalStorage parsing, updates, corruption fallback, and versioned keys.
-- Favorite toggling, reading-status transitions, and review CRUD.
+- My Library membership toggling, reading-status transitions, and review CRUD.
 - Route rendering, including invalid detail IDs and the wildcard 404.
 - A representative responsive and keyboard-accessibility pass.
 
