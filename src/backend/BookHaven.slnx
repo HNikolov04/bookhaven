@@ -1,8 +1,24 @@
 <Solution>
-  <Project Path="BookHaven.API/BookHaven.API.csproj" />
-  <Project Path="BookHaven.Application/BookHaven.Application.csproj" />
-  <Project Path="BookHaven.Domain/BookHaven.Domain.csproj" />
-  <Project Path="BookHaven.Infrastructure/BookHaven.Infrastructure.csproj" />
-  <Project Path="BookHaven.Persistence/BookHaven.Persistence.csproj" />
-  <Project Path="BookHaven.Tests/BookHaven.Tests.csproj" />
+  <Folder Name="/00.Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.Config" />
+  </Folder>
+  <Folder Name="/01.Presentation/">
+      <Project Path="BookHaven.Api/BookHaven.Api.csproj" />
+  </Folder>
+  <Folder Name="/02.Core/">
+    <Project Path="BookHaven.Application/BookHaven.Application.csproj" />
+    <Project Path="BookHaven.Domain/BookHaven.Domain.csproj" />
+  </Folder>
+  <Folder Name="/03.Persistence/">
+    <Project Path="BookHaven.Persistence/BookHaven.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/04.Infrastructure/">
+    <Project Path="BookHaven.Infrastructure/BookHaven.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/05.Tests/">
+    <Project Path="BookHaven.Tests/BookHaven.Tests.csproj" />
+  </Folder>
 </Solution>
