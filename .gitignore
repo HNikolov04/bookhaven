@@ -77,8 +77,80 @@ temp/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
+
+# .NET / ASP.NET Core build output
+**/[Bb]in/
+**/[Oo]bj/
+artifacts/
+publish/
+app.publish/
+
+# Visual Studio, Rider, and per-user .NET state
+.vs/
+*.user
+*.rsuser
+*.sln.docstates
+*.csproj.user
+*.fsproj.user
+*.vbproj.user
+*.pubxml.user
+*.publishproj
+*.publishsettings
+
+# NuGet generated files and local package output
+packages/
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+
+# .NET tests, coverage, benchmarks, and profiling
+[Tt]est[Rr]esults/
+BenchmarkDotNet.Artifacts/
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.cobertura.xml
+*.opencover.xml
+*.binlog
+*.dgml
+
+# ASP.NET Core local configuration and secrets
+appsettings.Local.json
+appsettings.*.Local.json
+appsettings.*.local.json
+secrets.json
+.aspnet/
+*.pfx
+*.p12
+*.key
+
+# Local development databases and SQL Server files
+*.local.db
+*.local.sqlite
+*.local.sqlite3
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal
+*.mdf
+*.ldf
+*.ndf
+
+# Generated .NET tooling and restore state
+.dotnet/
+.store/
+.fake/
+.ionide/
+MigrationBackup/
+_ReSharper*/
+*.DotSettings.user
 
 # Operating-system metadata
 .DS_Store
