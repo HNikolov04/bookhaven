@@ -24,51 +24,45 @@ Use a feature-first structure with a small shared application layer:
 src/
   app/
     App.tsx
-    providers.tsx
-    queryClient.ts
     router.tsx
-    theme.ts
-  assets/
-  components/
-    feedback/
-    layout/
-    ui/
+    providers.tsx
   features/
+    home/
+      HomePage.tsx
+      HeroSection.tsx
+      FeaturedBooks.tsx
     books/
+      CatalogPage.tsx
+      BookDetailsPage.tsx
+      BookFilters.tsx
       api/
-      components/
       hooks/
-      model/
-      pages/
+      types.ts
     favorites/
-      hooks/
-      pages/
-      storage/
+      FavoritesPage.tsx
+      useFavorites.ts
     library/
-      components/
-      hooks/
-      pages/
-      storage/
-  hooks/
-  lib/
+      MyLibraryPage.tsx
+      ReviewForm.tsx
+      ReadingStatus.tsx
+      useMyLibrary.ts
+  shared/
+    components/
+    layouts/
+    hooks/
     api/
-    storage/
-  pages/
-    HomePage.tsx
-    NotFoundPage.tsx
-  styles/
-    index.css
-    tokens.css
-  test/
-  types/
+    styles/
+      globals.css
+      theme.ts
+    utils/
   main.tsx
 ```
 
 Rules:
 
 - Keep feature-specific code inside its feature.
-- Move code to `components/`, `hooks/`, `lib/`, or `types/` only after it is
-  genuinely shared by at least two features.
+- Move code to `shared/` only after it is genuinely shared by at least two
+  features or is application-wide infrastructure.
 - Pages compose features and layout; they do not contain HTTP or storage logic.
 - Do not create barrel `index.ts` files unless they provide a deliberate public
   API for a feature. Importing directly keeps dependencies visible.
