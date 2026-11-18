@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="BookHaven.API/BookHaven.API.csproj" />
+  <Project Path="BookHaven.Application/BookHaven.Application.csproj" />
+  <Project Path="BookHaven.Domain/BookHaven.Domain.csproj" />
+  <Project Path="BookHaven.Infrastructure/BookHaven.Infrastructure.csproj" />
+  <Project Path="BookHaven.Persistence/BookHaven.Persistence.csproj" />
+  <Project Path="BookHaven.Tests/BookHaven.Tests.csproj" />
+</Solution>
