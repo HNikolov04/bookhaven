@@ -11,9 +11,8 @@ public sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.ToTable("Reviews");
         builder.HasKey(review => review.Id);
         builder.Property(review => review.Text).HasMaxLength(2_000).IsRequired();
-        builder.Property(review => review.Rating).IsRequired();
+        builder.Property(review => review.Stars).IsRequired();
         builder.Property(review => review.CreatedAtUtc).IsRequired();
-        builder.Property(review => review.UpdatedAtUtc).IsRequired();
         builder.HasIndex(review => new { review.BookId, review.UserId }).IsUnique();
         builder.HasOne(review => review.Book)
             .WithMany(book => book.Reviews)

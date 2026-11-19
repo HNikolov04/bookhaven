@@ -14,13 +14,10 @@ public sealed class UserRepository : IUserRepository
         this.dbContext = dbContext;
     }
 
-    public Task<bool> ExistsAsync(
-        string username,
-        string email,
-        CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(string email, CancellationToken cancellationToken)
     {
         return dbContext.Users.AnyAsync(
-            user => user.Username == username || user.Email == email,
+            user => user.Email == email,
             cancellationToken);
     }
 
@@ -41,10 +38,8 @@ public sealed class UserRepository : IUserRepository
         User entity = new()
         {
             Id = user.Id,
-            Username = user.Username,
             Email = user.Email,
             PasswordHash = user.PasswordHash,
-            CreatedAtUtc = user.CreatedAtUtc,
         };
 
         dbContext.Users.Add(entity);
@@ -54,11 +49,6 @@ public sealed class UserRepository : IUserRepository
 
     private static UserRepositoryDto ToRepositoryDto(User user)
     {
-        return new UserRepositoryDto(
-            user.Id,
-            user.Username,
-            user.Email,
-            user.PasswordHash,
-            user.CreatedAtUtc);
+        return new UserRepositoryDto(user.Id, user.Email, user.PasswordHash);
     }
 }

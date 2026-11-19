@@ -5,21 +5,19 @@ namespace BookHaven.Application.Interfaces;
 public interface IBookHavenService
 {
     Task<PagedDto<BookDto>> GetBooksAsync(
+        Guid userId,
         BookQueryDto query,
         CancellationToken cancellationToken);
 
-    Task<BookDto?> GetBookByIdAsync(Guid id, CancellationToken cancellationToken);
-
-    Task<BookDto> AddBookAsync(
-        BookCommandDto command,
-        CancellationToken cancellationToken);
-
-    Task<BookDto?> UpdateBookAsync(
+    Task<BookDto?> GetBookByIdAsync(
         Guid id,
-        BookCommandDto command,
+        Guid userId,
         CancellationToken cancellationToken);
 
-    Task<bool> DeleteBookAsync(Guid id, CancellationToken cancellationToken);
+    Task<bool> AddBookToFavouritesAsync(
+        Guid bookId,
+        Guid userId,
+        CancellationToken cancellationToken);
 
     Task<ReviewDto?> AddReviewAsync(
         Guid bookId,

@@ -11,11 +11,13 @@ public sealed class BookHavenDbContext(DbContextOptions<BookHavenDbContext> opti
 
     public DbSet<Author> Authors => Set<Author>();
 
-    public DbSet<BookAuthor> BookAuthors => Set<BookAuthor>();
+    public DbSet<BookGenre> BookGenres => Set<BookGenre>();
 
     public DbSet<Review> Reviews => Set<Review>();
 
     public DbSet<User> Users => Set<User>();
+
+    public DbSet<UserFavouriteBook> UserFavouriteBooks => Set<UserFavouriteBook>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,3 +1,5 @@
+using BookHaven.Domain.Users;
+
 namespace BookHaven.Domain.Books;
 
 public sealed class Book
@@ -6,21 +8,29 @@ public sealed class Book
 
     public required string Title { get; set; }
 
-    public string? Description { get; set; }
+    public required string ShortDescription { get; set; }
 
-    public int? FirstPublishedYear { get; set; }
+    public required string LongDescription { get; set; }
 
-    public string? CoverUrl { get; set; }
+    public required string PictureUrl { get; set; }
 
-    public Genre Genre { get; set; }
+    public int Pages { get; set; }
+
+    public int PublishYear { get; set; }
+
+    public decimal AverageStars { get; set; }
+
+    public int RatingVotes { get; set; }
 
     public bool IsFeatured { get; set; }
 
-    public DateTimeOffset CreatedAtUtc { get; set; }
+    public Guid AuthorId { get; set; }
 
-    public DateTimeOffset UpdatedAtUtc { get; set; }
+    public required Author Author { get; set; }
 
-    public ICollection<BookAuthor> BookAuthors { get; set; } = [];
+    public ICollection<BookGenre> BookGenres { get; set; } = [];
 
     public ICollection<Review> Reviews { get; set; } = [];
+
+    public ICollection<UserFavouriteBook> FavouritedBy { get; set; } = [];
 }

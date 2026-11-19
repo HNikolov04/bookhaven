@@ -1,108 +1,66 @@
-# ADR-0000: Simplified layered API and JWT authentication
+# ADR-0000: Authenticated read-only catalogue architecture
 
 - **Status:** Accepted
 - **Date:** 2026-11-19
 
 ## Context
 
-The earlier design introduced an Infrastructure project, anonymous client IDs,
-separate genre entities, and more layers than this coursework needs. The project
-must remain understandable while still demonstrating controllers, services,
-repositories, EF Core relationships, DTO transfer, manual mapping, and basic
-authentication.
+BookHaven must demonstrate layered DTO transfer, manual mapping, EF Core
+relationships, favourites, reviews, and simple JWT authentication while staying
+small enough for coursework defense.
 
 ## Decision
 
-### Backend
+Use Domain, Application, Persistence, and Api runtime projects. Keep one
+application service, one book repository, a minimal user repository, and two API
+controllers: `BooksController` and `UsersController`. Shared JWT user extraction
+lives in `BaseController`.
 
-Use four runtime projects:
+The catalogue is read-only through HTTP. The only book-related writes are adding
+a favourite and creating/editing/deleting the current user's review.
 
-```text
-BookHaven.Api
-BookHaven.Application
-BookHaven.Domain
-BookHaven.Persistence
-```
-
-Remove `BookHaven.Infrastructure`. Keep one application service
-(`BookHavenService`) and one controller (`BookHavenController`). Use a concrete
-book repository plus a minimal user repository required for authentication.
-
-Use SQLite and EF Core. Each entity has its own configuration file. Entity
-relationships use explicit navigation properties:
+Domain relationships:
 
 ```text
-Book <- BookAuthor -> Author
-Book <- Review -> User
+Author 1 -> many Books
+Book 1 -> many BookGenres (Genre enum values)
+Book 1 -> many Reviews <- 1 User
+Book many <-> many Users through UserFavouriteBook
 ```
 
-`Genre` is a domain enum stored as text on `Book`; there is no Genre table or
-book-genre join.
+Books persist average stars and rating vote count. Repository review operations
+recalculate both values.
 
-### DTO boundaries
+Users contain email and password hash only. Registration/login use PBKDF2 and a
+two-hour JWT. All book routes require authentication; only register/login are
+anonymous.
 
-Use separate DTOs at each transfer boundary:
+DTO transfer remains explicit:
 
 ```text
 ApiDto <-> Application DTO <-> Repository DTO <-> Entity
 ```
 
-Every conversion is handwritten. AutoMapper is deliberately excluded so the
-coursework can demonstrate exactly how data moves between layers.
+Every DTO and enum has its own file. Mapping is handwritten. `Program.cs` stays
+minimal through `IServiceCollectionExtensions`, `IConfigurationExtensions`, and
+`WebApplicationExtensions`.
 
-### API
-
-All routes live in one controller under `/api`:
-
-- public book list/details;
-- authenticated book create/update/delete;
-- authenticated review create/update/delete;
-- public register/login.
-
-The service performs validation and orchestration. The controller maps ApiDtos,
-HTTP status codes, and the authenticated user ID.
-
-### Authentication
-
-Use a small custom user model and JWT bearer authentication rather than
-ASP.NET Identity. Registration stores a PBKDF2 password hash. Login verifies the
-hash and returns a two-hour JWT. The frontend stores token plus user in
-LocalStorage and attaches the token through the Axios interceptor.
-
-This is intentionally coursework-level authentication. It does not implement
-refresh tokens, roles, password recovery, email confirmation, account lockout,
-or external providers.
-
-### Frontend
-
-Add `/login` and `/register`, an `AuthProvider`, React Query login/register
-mutations, and header sign-in/sign-out controls. The frontend calls BookHaven's
-API instead of Open Library directly.
-
-Keep the current My Library LocalStorage prototype separate until authenticated
-library persistence is deliberately added.
+The frontend places login/register outside `MainLayout`, guards every other
+route, clears auth after `401`, and exposes email/logout through a profile-avatar
+menu. Favourites are server state queried with React Query.
 
 ## Consequences
 
-### Benefits
-
-- Fewer projects and abstractions.
-- DTO movement and mapping are visible and defendable.
-- Real EF relationships and configurations remain demonstrated.
-- JWT protects write endpoints without the weight of Identity.
-- Frontend and backend share one API contract.
-
-### Trade-offs
-
-- One service and one controller will become large if scope grows.
-- Repository DTOs add repetitive mapping by design.
-- The development JWT key must be replaced for deployment.
-- `EnsureCreated` is simple but does not provide migration history.
-- LocalStorage JWT storage is simple but less hardened than an HttpOnly cookie
-  architecture.
+- Catalogue content must be seeded/imported through persistence because the API
+  has no book-write endpoints.
+- Email is the only displayed user identity.
+- Multiple genres remain strongly typed without a Genre lookup table.
+- Persisted rating summaries require recalculation after review writes.
+- LocalStorage JWT is intentionally simple but less hardened than HttpOnly
+  cookies; production keys must not be committed.
+- The explicit DTO-per-boundary approach is repetitive but easy to explain.
 
 ## Revisit when
 
-Split the controller/service or add migrations only when the coursework scope
-actually grows enough to justify them. Do not add architectural patterns merely
-for hypothetical future use.
+Add migrations, refresh tokens, roles, or split services/controllers only if the
+coursework scope grows and provides a concrete need.

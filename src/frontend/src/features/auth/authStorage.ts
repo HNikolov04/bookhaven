@@ -13,7 +13,6 @@ export function readStoredAuth(): AuthResponse | null {
       typeof auth.token !== 'string' ||
       !auth.user ||
       typeof auth.user.id !== 'string' ||
-      typeof auth.user.username !== 'string' ||
       typeof auth.user.email !== 'string'
     ) {
       return null

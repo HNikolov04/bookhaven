@@ -1,118 +1,92 @@
 # BookHaven Backend Conventions
 
-This file contains reusable backend rules. Keep delivery status in the root
-`implementation.md` and cross-stack decisions in the single ADR.
-
-## Projects
+## Layers
 
 | Project | Responsibility |
 | --- | --- |
-| `BookHaven.Domain` | Entities, navigation properties, and enums |
-| `BookHaven.Application` | Interfaces, DTOs, mappings, validation, and one service |
-| `BookHaven.Persistence` | EF Core DbContext, repositories, and configurations |
-| `BookHaven.Api` | ApiDtos, manual mapping, JWT, one controller, and composition root |
-| `BookHaven.Tests` | Simple unit tests added after behavior stabilizes |
+| Domain | Entities, navigation properties, and domain enums |
+| Application | DTOs, repository interfaces, mapping, validation, and service |
+| Persistence | DbContext, repositories, and one configuration per entity |
+| Api | Controllers, ApiDtos, API enums, JWT, extensions, and composition root |
+| Tests | Small deterministic unit tests |
 
-- Dependencies point toward Domain.
-- There is no Infrastructure layer.
-- Do not add MediatR, AutoMapper, ASP.NET Identity, or a generic repository.
+- There is no Infrastructure project.
 - `BookHavenService` is the single application service.
-- `BookHavenController` contains all endpoints.
+- `BooksController` owns authenticated book/favourite/review endpoints.
+- `UsersController` owns register/login.
+- `BaseController` exposes shared authenticated-user helpers.
 
-## Naming
+## Files and naming
 
+- One DTO per file.
+- One enum per file under an `Enums` folder.
+- Mapping types are separated by feature/boundary.
 - Use `Api`, `Dto`, `Id`, and `Url` casing.
-- Async methods end with `Async` and accept `CancellationToken` last.
-- Namespaces mirror folders.
-- Use file-scoped namespaces, nullable reference types, and warnings as errors.
-- Concrete types are `sealed` unless inheritance is intentional.
+- Async methods end in `Async` and accept `CancellationToken` last.
+- Use file-scoped namespaces, nullable references, and warnings as errors.
 
-## Entities
+## Domain
 
-- Entities live only in Domain and contain navigation properties.
-- `Book.Genre` uses the `Genre` enum; there is no Genre table or `BookGenre`.
-- Books and authors use the explicit `BookAuthor` join entity.
-- Reviews reference both `Book` and `User`.
-- A unique `(BookId, UserId)` index enforces one review per user per book.
-- Timestamps use `DateTimeOffset` and the `Utc` suffix.
-- Passwords are never stored directly; the service stores PBKDF2 hashes.
+- One book has one author.
+- One book has multiple `Genre` enum values through `BookGenre`.
+- Book ratings persist `AverageStars` and `RatingVotes`.
+- Each review has `BookId`, `UserId`, text, stars, and `CreatedAtUtc`.
+- One user can review a given book once.
+- Users have email and password hash only; there is no username.
+- Favourites use `UserFavouriteBook` with `(UserId, BookId)` as the key.
 
-## DTO and mapping flow
-
-Every boundary owns a DTO:
+## DTO flow
 
 ```text
-ApiDto <-> Application DTO <-> Repository DTO <-> Domain entity
+ApiDto <-> Application DTO <-> Repository DTO <-> Entity
 ```
 
-- Mapping is handwritten in the owning layer.
-- API controllers never return entities or repository DTOs.
-- Persistence never returns tracked entities outside the project.
-- Do not introduce AutoMapper.
+- All mapping is handwritten.
+- Controllers never return entities or repository DTOs.
+- Persistence never exposes tracked entities.
+- Do not add AutoMapper.
 
-## Repositories
+## Repositories and service
 
-- Interfaces live in `BookHaven.Application/Interfaces`.
-- Repository boundary DTOs live in `Application/Interfaces/Dtos`.
-- Implementations live in `BookHaven.Persistence/Repositories`.
-- `BookRepository` owns book queries, CRUD, and book-review persistence.
-- `UserRepository` contains only the persistence required by register/login.
-- Use `AsNoTracking` for reads and `AsSplitQuery` for multiple collections.
-- Do not expose `IQueryable` outside Persistence.
+- Interfaces live in `Application/Interfaces`.
+- `BookRepository` supports reads, favourites, and reviews; it does not expose
+  book create/update/delete.
+- `UserRepository` supports email lookup and registration persistence.
+- Read queries use `AsNoTracking` and `AsSplitQuery` when loading collections.
+- `BookHavenService` owns paging normalization, review validation, email
+  normalization, password hashing, login, and orchestration.
 
-## Service
-
-`BookHavenService` owns:
-
-- query normalization and paging bounds;
-- book and review validation;
-- registration and login behavior;
-- password hashing/verification;
-- orchestration between repositories and token generation.
-
-Controllers stay thin and translate HTTP input/output only.
-
-## Entity Framework Core
+## EF Core
 
 - SQLite is the development provider.
-- Every entity has its own `IEntityTypeConfiguration<T>` file.
-- Configure keys, lengths, relationships, conversions, indexes, and delete
+- Every entity has an `IEntityTypeConfiguration<T>` file.
+- Configure keys, indexes, lengths, relationships, conversions, and delete
   behavior explicitly.
-- Store `Genre` as its string name.
-- Keep package versions in `Directory.Packages.props`.
-- The current coursework setup uses `EnsureCreated`; introduce migrations only
-  if deployment or schema evolution requires them.
+- Genre values are stored as strings in `BookGenres`.
+- Review changes recalculate book average stars and vote count.
+- The coursework setup uses `EnsureCreated`; use migrations when schema history
+  becomes a deployment requirement.
 
-## HTTP and JWT
+## HTTP and authentication
 
-- Routes start with `/api`.
-- Reads are public; book writes and review writes require JWT.
-- Review update/delete operations use the authenticated user ID.
-- Registration/login return an `AuthApiDto` containing token and user.
+- `/api/books` and all nested endpoints require JWT.
+- `/api/users/register` and `/api/users/login` are anonymous.
+- Book catalogue data is read-only through the API.
+- Review mutations use the token user and cannot edit another user's review.
 - JWT expiry is two hours.
-- Keep the development signing key out of real deployments. Production keys
-  must come from environment configuration or secret storage.
-- Return `201` for creates, `204` for deletes, `404` for missing resources,
-  `409` for duplicates, and validation Problem Details for invalid input.
+- Production signing keys come from environment configuration/secret storage.
+- Use Problem Details for validation and authentication errors.
 
-## Validation
+## Program and extensions
 
-- Trim all user text before persistence.
-- Title: required, maximum 300 characters.
-- Description: maximum 5,000 characters.
-- Author: at least one, maximum 200 characters each.
-- Review: rating 1-5 and non-empty text up to 2,000 characters.
-- Username: 3-50 characters.
-- Password: 6-100 characters for coursework scope.
-- Email must have a valid shape and is normalized to lowercase.
+- `Program.cs` stays minimal.
+- Service registration belongs in `IServiceCollectionExtensions`.
+- Required configuration parsing belongs in `IConfigurationExtensions`.
+- Pipeline/database startup belongs in `WebApplicationExtensions`.
 
-## Quality checks
+## Verification
 
 ```powershell
-dotnet restore BookHaven.slnx
 dotnet build BookHaven.slnx --no-restore
 dotnet test BookHaven.slnx --no-build
 ```
-
-Unit tests remain small and target service validation, mapping, password
-verification, and repository-independent behavior.

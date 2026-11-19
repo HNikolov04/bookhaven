@@ -1,7 +1,7 @@
 import { IconButton } from '@mui/material'
 import { Link } from 'react-router'
+import { useAddBookToFavouritesMutation } from '../../features/books/hooks/useAddBookToFavouritesMutation'
 import type { BookSummary } from '../../features/books/types'
-import { useMyLibrary } from '../../features/library/useMyLibrary'
 
 type BookCardProps = {
   book: BookSummary
@@ -23,19 +23,18 @@ function LibraryBookmarkIcon({ filled }: { filled: boolean }) {
 }
 
 export function BookCard({ book }: BookCardProps) {
-  const { isInLibrary, toggleBook } = useMyLibrary()
-  const isBookInLibrary = isInLibrary(book.id)
+  const addToFavourites = useAddBookToFavouritesMutation()
 
   return (
     <article className="book-card">
       <div className="book-card__cover-wrap">
-        {book.coverUrl ? (
+        {book.pictureUrl ? (
           <img
             alt={`Cover of ${book.title}`}
             className="book-card__cover"
             height="360"
             loading="lazy"
-            src={book.coverUrl}
+            src={book.pictureUrl}
             width="240"
           />
         ) : (
@@ -46,23 +45,24 @@ export function BookCard({ book }: BookCardProps) {
         )}
         <IconButton
           aria-label={
-            isBookInLibrary
-              ? `Remove ${book.title} from My Library`
+            book.isFavourite
+              ? `${book.title} is in My Library`
               : `Add ${book.title} to My Library`
           }
           className="library-button"
-          onClick={() => toggleBook(book)}
+          disabled={book.isFavourite || addToFavourites.isPending}
+          onClick={() => addToFavourites.mutate(book.id)}
           size="small"
         >
-          <LibraryBookmarkIcon filled={isBookInLibrary} />
+          <LibraryBookmarkIcon filled={book.isFavourite} />
         </IconButton>
       </div>
       <div className="book-card__content">
         <Link className="book-card__title" to={`/books/${book.id}`}>
           {book.title}
         </Link>
-        <p>{book.authors.slice(0, 2).join(', ')}</p>
-        {book.firstPublishYear && <span>{book.firstPublishYear}</span>}
+        <p>{book.author.name}</p>
+        <span>{book.publishYear}</span>
       </div>
     </article>
   )

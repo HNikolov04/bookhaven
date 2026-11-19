@@ -1,6 +1,5 @@
 export type AuthUser = {
   id: string
-  username: string
   email: string
 }
 
@@ -14,6 +13,4 @@ export type LoginRequest = {
   password: string
 }
 
-export type RegisterRequest = LoginRequest & {
-  username: string
-}
+export type RegisterRequest = LoginRequest

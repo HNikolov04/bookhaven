@@ -11,15 +11,15 @@ public sealed class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.ToTable("Books");
         builder.HasKey(book => book.Id);
         builder.Property(book => book.Title).HasMaxLength(300).IsRequired();
-        builder.Property(book => book.Description).HasMaxLength(5_000);
-        builder.Property(book => book.CoverUrl).HasMaxLength(2_048);
-        builder.Property(book => book.Genre)
-            .HasConversion<string>()
-            .HasMaxLength(32)
-            .IsRequired();
-        builder.Property(book => book.CreatedAtUtc).IsRequired();
-        builder.Property(book => book.UpdatedAtUtc).IsRequired();
+        builder.Property(book => book.ShortDescription).HasMaxLength(500).IsRequired();
+        builder.Property(book => book.LongDescription).HasMaxLength(5_000).IsRequired();
+        builder.Property(book => book.PictureUrl).HasMaxLength(2_048).IsRequired();
+        builder.Property(book => book.AverageStars).HasPrecision(3, 2);
+        builder.HasOne(book => book.Author)
+            .WithMany(author => author.Books)
+            .HasForeignKey(book => book.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(book => book.Title);
-        builder.HasIndex(book => book.Genre);
+        builder.HasIndex(book => book.AuthorId);
     }
 }

@@ -1,22 +1,35 @@
 export type BookSummary = {
   id: string
   title: string
-  authors: string[]
-  firstPublishYear: number | null
-  coverUrl: string | null
-  genre: string
+  shortDescription: string
+  longDescription: string
+  author: {
+    id: string
+    name: string
+    description: string | null
+  }
+  pictureUrl: string
+  genres: string[]
+  pages: number
+  publishYear: number
+  averageStars: number
+  ratingVotes: number
+  isFeatured: boolean
+  isFavourite: boolean
+  reviews: ReviewApiDto[]
 }
 
-export type BookApiDto = {
+export type ReviewApiDto = {
   id: string
-  title: string
-  description: string | null
-  firstPublishedYear: number | null
-  coverUrl: string | null
-  genre: string
-  isFeatured: boolean
-  authors: string[]
+  bookId: string
+  userId: string
+  userEmail: string
+  text: string
+  stars: number
+  createdAtUtc: string
 }
+
+export type BookApiDto = BookSummary
 
 export type PagedApiDto<T> = {
   items: T[]

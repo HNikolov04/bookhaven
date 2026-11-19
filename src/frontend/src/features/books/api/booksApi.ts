@@ -12,3 +12,18 @@ export async function getFeaturedBooks(): Promise<BookSummary[]> {
   })
   return response.data.items.map(mapBookApiDtoToBook)
 }
+
+export async function getFavouriteBooks(): Promise<BookSummary[]> {
+  const response = await axiosClient.get<PagedApiDto<BookApiDto>>('/books', {
+    params: {
+      favouritesOnly: true,
+      page: 1,
+      pageSize: 100,
+    },
+  })
+  return response.data.items.map(mapBookApiDtoToBook)
+}
+
+export async function addBookToFavourites(bookId: string): Promise<void> {
+  await axiosClient.post(`/books/${bookId}/favourites`)
+}

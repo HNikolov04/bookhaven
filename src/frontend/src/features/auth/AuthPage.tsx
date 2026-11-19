@@ -26,7 +26,6 @@ function AuthPage({ mode }: { mode: AuthMode }) {
   const auth = useAuth()
   const loginMutation = useLoginMutation()
   const registerMutation = useRegisterMutation()
-  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const mutation = isRegister ? registerMutation : loginMutation
@@ -44,7 +43,7 @@ function AuthPage({ mode }: { mode: AuthMode }) {
     }
 
     if (isRegister) {
-      registerMutation.mutate({ username, email, password }, { onSuccess })
+      registerMutation.mutate({ email, password }, { onSuccess })
       return
     }
 
@@ -58,7 +57,7 @@ function AuthPage({ mode }: { mode: AuthMode }) {
         <h1>{isRegister ? 'Create an account' : 'Sign in'}</h1>
         <p>
           {isRegister
-            ? 'Register with a username, email, and password.'
+            ? 'Register with your email and password.'
             : 'Sign in to add books and write your reviews.'}
         </p>
 
@@ -67,15 +66,6 @@ function AuthPage({ mode }: { mode: AuthMode }) {
         )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          {isRegister && (
-            <TextField
-              autoComplete="username"
-              label="Username"
-              onChange={(event) => setUsername(event.target.value)}
-              required
-              value={username}
-            />
-          )}
           <TextField
             autoComplete="email"
             label="Email"
@@ -110,6 +100,7 @@ function AuthPage({ mode }: { mode: AuthMode }) {
           </Link>
         </p>
       </Paper>
+      <p className="auth-powered">Powered by BookHaven</p>
     </main>
   )
 }

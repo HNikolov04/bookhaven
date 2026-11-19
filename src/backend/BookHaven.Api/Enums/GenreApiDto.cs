@@ -1,8 +1,7 @@
-namespace BookHaven.Domain.Books;
+namespace BookHaven.Api.Enums;
 
-public enum Genre
+public enum GenreApiDto
 {
-    Unknown = 0,
     Fiction = 1,
     ScienceFiction = 2,
     Fantasy = 3,

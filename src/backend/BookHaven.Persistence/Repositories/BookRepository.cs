@@ -1,6 +1,8 @@
 using BookHaven.Application.Interfaces;
 using BookHaven.Application.Interfaces.Dtos;
+using BookHaven.Application.Interfaces.Enums;
 using BookHaven.Domain.Books;
+using BookHaven.Domain.Enums;
 using BookHaven.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,29 +18,24 @@ public sealed class BookRepository : IBookRepository
     }
 
     public async Task<PagedRepositoryDto<BookRepositoryDto>> GetBooksAsync(
+        Guid userId,
         BookQueryRepositoryDto query,
         CancellationToken cancellationToken)
     {
-        IQueryable<Book> books = dbContext.Books
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(book => book.BookAuthors)
-                .ThenInclude(bookAuthor => bookAuthor.Author)
-            .Include(book => book.Reviews)
-                .ThenInclude(review => review.User);
+        IQueryable<Book> books = CreateBookQuery();
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
             string search = query.Search.Trim();
             books = books.Where(book =>
-                book.Title.Contains(search) ||
-                book.BookAuthors.Any(bookAuthor => bookAuthor.Author.Name.Contains(search)));
+                book.Title.Contains(search) || book.Author.Name.Contains(search));
         }
 
         if (query.Genre is not null)
         {
             Genre genre = (Genre)query.Genre.Value;
-            books = books.Where(book => book.Genre == genre);
+            books = books.Where(book =>
+                book.BookGenres.Any(bookGenre => bookGenre.Genre == genre));
         }
 
         if (query.IsFeatured is not null)
@@ -46,18 +43,18 @@ public sealed class BookRepository : IBookRepository
             books = books.Where(book => book.IsFeatured == query.IsFeatured.Value);
         }
 
+        if (query.FavouritesOnly)
+        {
+            books = books.Where(book =>
+                book.FavouritedBy.Any(favourite => favourite.UserId == userId));
+        }
+
         books = query.Sort switch
         {
             BookSortRepositoryDto.TitleDescending => books.OrderByDescending(book => book.Title),
-            BookSortRepositoryDto.AuthorAscending => books
-                .OrderBy(book => book.BookAuthors
-                    .OrderBy(bookAuthor => bookAuthor.Author.Name)
-                    .Select(bookAuthor => bookAuthor.Author.Name)
-                    .FirstOrDefault()),
-            BookSortRepositoryDto.Newest => books
-                .OrderByDescending(book => book.FirstPublishedYear),
-            BookSortRepositoryDto.Oldest => books
-                .OrderBy(book => book.FirstPublishedYear),
+            BookSortRepositoryDto.AuthorAscending => books.OrderBy(book => book.Author.Name),
+            BookSortRepositoryDto.Newest => books.OrderByDescending(book => book.PublishYear),
+            BookSortRepositoryDto.Oldest => books.OrderBy(book => book.PublishYear),
             _ => books.OrderBy(book => book.Title),
         };
 
@@ -68,7 +65,7 @@ public sealed class BookRepository : IBookRepository
             .ToListAsync(cancellationToken);
 
         return new PagedRepositoryDto<BookRepositoryDto>(
-            items.Select(ToRepositoryDto).ToArray(),
+            items.Select(book => ToRepositoryDto(book, userId)).ToArray(),
             query.Page,
             query.PageSize,
             totalCount);
@@ -76,84 +73,41 @@ public sealed class BookRepository : IBookRepository
 
     public async Task<BookRepositoryDto?> GetBookByIdAsync(
         Guid id,
+        Guid userId,
         CancellationToken cancellationToken)
     {
-        Book? book = await dbContext.Books
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(item => item.BookAuthors)
-                .ThenInclude(bookAuthor => bookAuthor.Author)
-            .Include(item => item.Reviews)
-                .ThenInclude(review => review.User)
+        Book? book = await CreateBookQuery()
             .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
-
-        return book is null ? null : ToRepositoryDto(book);
+        return book is null ? null : ToRepositoryDto(book, userId);
     }
 
-    public async Task<BookRepositoryDto> AddBookAsync(
-        BookCommandRepositoryDto command,
+    public async Task<bool> AddBookToFavouritesAsync(
+        Guid bookId,
+        Guid userId,
         CancellationToken cancellationToken)
     {
-        DateTimeOffset now = DateTimeOffset.UtcNow;
-        Book book = new()
-        {
-            Id = Guid.NewGuid(),
-            Title = command.Title,
-            Description = command.Description,
-            FirstPublishedYear = command.FirstPublishedYear,
-            CoverUrl = command.CoverUrl,
-            Genre = (Genre)command.Genre,
-            IsFeatured = command.IsFeatured,
-            CreatedAtUtc = now,
-            UpdatedAtUtc = now,
-        };
-
-        await AddAuthorsAsync(book, command.Authors, cancellationToken);
-        dbContext.Books.Add(book);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return (await GetBookByIdAsync(book.Id, cancellationToken))!;
-    }
-
-    public async Task<BookRepositoryDto?> UpdateBookAsync(
-        Guid id,
-        BookCommandRepositoryDto command,
-        CancellationToken cancellationToken)
-    {
-        Book? book = await dbContext.Books
-            .Include(item => item.BookAuthors)
-            .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
-
-        if (book is null)
-        {
-            return null;
-        }
-
-        book.Title = command.Title;
-        book.Description = command.Description;
-        book.FirstPublishedYear = command.FirstPublishedYear;
-        book.CoverUrl = command.CoverUrl;
-        book.Genre = (Genre)command.Genre;
-        book.IsFeatured = command.IsFeatured;
-        book.UpdatedAtUtc = DateTimeOffset.UtcNow;
-
-        dbContext.BookAuthors.RemoveRange(book.BookAuthors);
-        book.BookAuthors.Clear();
-        await AddAuthorsAsync(book, command.Authors, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return await GetBookByIdAsync(book.Id, cancellationToken);
-    }
-
-    public async Task<bool> DeleteBookAsync(Guid id, CancellationToken cancellationToken)
-    {
-        Book? book = await dbContext.Books.FindAsync([id], cancellationToken);
-        if (book is null)
+        Book? book = await dbContext.Books.FindAsync([bookId], cancellationToken);
+        User? user = await dbContext.Users.FindAsync([userId], cancellationToken);
+        if (book is null || user is null)
         {
             return false;
         }
 
-        dbContext.Books.Remove(book);
+        bool alreadyFavourite = await dbContext.UserFavouriteBooks.AnyAsync(
+            favourite => favourite.BookId == bookId && favourite.UserId == userId,
+            cancellationToken);
+        if (alreadyFavourite)
+        {
+            return true;
+        }
+
+        dbContext.UserFavouriteBooks.Add(new UserFavouriteBook
+        {
+            BookId = bookId,
+            UserId = userId,
+            Book = book,
+            User = user,
+        });
         await dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
@@ -169,28 +123,26 @@ public sealed class BookRepository : IBookRepository
         bool alreadyReviewed = await dbContext.Reviews.AnyAsync(
             review => review.BookId == bookId && review.UserId == userId,
             cancellationToken);
-
         if (book is null || user is null || alreadyReviewed)
         {
             return null;
         }
 
-        DateTimeOffset now = DateTimeOffset.UtcNow;
         Review review = new()
         {
             Id = Guid.NewGuid(),
             BookId = bookId,
             UserId = userId,
-            Rating = command.Rating,
             Text = command.Text,
-            CreatedAtUtc = now,
-            UpdatedAtUtc = now,
+            Stars = command.Stars,
+            CreatedAtUtc = DateTimeOffset.UtcNow,
             Book = book,
             User = user,
         };
 
         dbContext.Reviews.Add(review);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await RecalculateRatingAsync(bookId, cancellationToken);
         return ToRepositoryDto(review);
     }
 
@@ -205,16 +157,15 @@ public sealed class BookRepository : IBookRepository
             .SingleOrDefaultAsync(
                 item => item.Id == reviewId && item.UserId == userId,
                 cancellationToken);
-
         if (review is null)
         {
             return null;
         }
 
-        review.Rating = command.Rating;
         review.Text = command.Text;
-        review.UpdatedAtUtc = DateTimeOffset.UtcNow;
+        review.Stars = command.Stars;
         await dbContext.SaveChangesAsync(cancellationToken);
+        await RecalculateRatingAsync(review.BookId, cancellationToken);
         return ToRepositoryDto(review);
     }
 
@@ -226,55 +177,75 @@ public sealed class BookRepository : IBookRepository
         Review? review = await dbContext.Reviews.SingleOrDefaultAsync(
             item => item.Id == reviewId && item.UserId == userId,
             cancellationToken);
-
         if (review is null)
         {
             return false;
         }
 
+        Guid bookId = review.BookId;
         dbContext.Reviews.Remove(review);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await RecalculateRatingAsync(bookId, cancellationToken);
         return true;
     }
 
-    private async Task AddAuthorsAsync(
-        Book book,
-        IEnumerable<string> authorNames,
-        CancellationToken cancellationToken)
+    private IQueryable<Book> CreateBookQuery()
     {
-        foreach (string authorName in authorNames)
-        {
-            string normalizedName = authorName.Trim();
-            string lowercaseName = normalizedName.ToLowerInvariant();
-            Author? author = await dbContext.Authors.FirstOrDefaultAsync(
-                item => item.Name.ToLower() == lowercaseName,
-                cancellationToken);
-
-            author ??= new Author { Id = Guid.NewGuid(), Name = normalizedName };
-            book.BookAuthors.Add(new BookAuthor
-            {
-                BookId = book.Id,
-                AuthorId = author.Id,
-                Book = book,
-                Author = author,
-            });
-        }
+        return dbContext.Books
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(book => book.Author)
+            .Include(book => book.BookGenres)
+            .Include(book => book.Reviews)
+                .ThenInclude(review => review.User)
+            .Include(book => book.FavouritedBy);
     }
 
-    private static BookRepositoryDto ToRepositoryDto(Book book)
+    private async Task RecalculateRatingAsync(
+        Guid bookId,
+        CancellationToken cancellationToken)
+    {
+        RatingSummary? summary = await dbContext.Reviews
+            .Where(review => review.BookId == bookId)
+            .GroupBy(_ => 1)
+            .Select(group => new RatingSummary(group.Count(), group.Average(review => review.Stars)))
+            .SingleOrDefaultAsync(cancellationToken);
+        Book? book = await dbContext.Books.FindAsync([bookId], cancellationToken);
+        if (book is null)
+        {
+            return;
+        }
+
+        book.RatingVotes = summary?.Votes ?? 0;
+        book.AverageStars = summary is null
+            ? 0
+            : (decimal)Math.Round(summary.Average, 2);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static BookRepositoryDto ToRepositoryDto(Book book, Guid userId)
     {
         return new BookRepositoryDto(
             book.Id,
             book.Title,
-            book.Description,
-            book.FirstPublishedYear,
-            book.CoverUrl,
-            (GenreRepositoryDto)book.Genre,
+            book.ShortDescription,
+            book.LongDescription,
+            new AuthorRepositoryDto(book.Author.Id, book.Author.Name, book.Author.Description),
+            book.PictureUrl,
+            book.BookGenres
+                .Select(item => (GenreRepositoryDto)item.Genre)
+                .OrderBy(genre => genre)
+                .ToArray(),
+            book.Pages,
+            book.PublishYear,
+            book.AverageStars,
+            book.RatingVotes,
             book.IsFeatured,
-            book.BookAuthors.Select(item => item.Author.Name).ToArray(),
-            book.Reviews.Select(ToRepositoryDto).ToArray(),
-            book.CreatedAtUtc,
-            book.UpdatedAtUtc);
+            book.FavouritedBy.Any(favourite => favourite.UserId == userId),
+            book.Reviews
+                .OrderByDescending(review => review.CreatedAtUtc)
+                .Select(ToRepositoryDto)
+                .ToArray());
     }
 
     private static ReviewRepositoryDto ToRepositoryDto(Review review)
@@ -283,10 +254,11 @@ public sealed class BookRepository : IBookRepository
             review.Id,
             review.BookId,
             review.UserId,
-            review.User.Username,
-            review.Rating,
+            review.User.Email,
             review.Text,
-            review.CreatedAtUtc,
-            review.UpdatedAtUtc);
+            review.Stars,
+            review.CreatedAtUtc);
     }
+
+    private sealed record RatingSummary(int Votes, double Average);
 }

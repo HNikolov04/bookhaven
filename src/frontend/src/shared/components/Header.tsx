@@ -1,13 +1,15 @@
 import {
   AppBar,
-  Button,
+  Avatar,
   Drawer,
   IconButton,
   List,
   ListItemButton,
+  Menu,
+  MenuItem,
   Toolbar,
 } from '@mui/material'
-import { useState } from 'react'
+import { useState, type MouseEvent } from 'react'
 import { NavLink } from 'react-router'
 import { useAuth } from '../../features/auth/useAuth'
 
@@ -38,7 +40,17 @@ function MenuIcon() {
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [profileAnchor, setProfileAnchor] = useState<HTMLElement | null>(null)
   const auth = useAuth()
+
+  function handleProfileOpen(event: MouseEvent<HTMLElement>) {
+    setProfileAnchor(event.currentTarget)
+  }
+
+  function handleSignOut() {
+    setProfileAnchor(null)
+    auth.signOut()
+  }
 
   return (
     <AppBar className="site-header" color="transparent" elevation={0} position="sticky">
@@ -64,25 +76,6 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
-          <div className="desktop-auth-actions">
-            {auth.isAuthenticated ? (
-              <>
-                <span className="header-username">{auth.user?.username}</span>
-                <Button onClick={auth.signOut} size="small" variant="outlined">
-                  Sign out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button component={NavLink} size="small" to="/login">
-                  Sign in
-                </Button>
-                <Button component={NavLink} size="small" to="/register" variant="contained">
-                  Register
-                </Button>
-              </>
-            )}
-          </div>
           <IconButton
             aria-label="Open navigation"
             className="header-icon-button mobile-menu-button"
@@ -90,6 +83,27 @@ export function Header() {
           >
             <MenuIcon />
           </IconButton>
+          <IconButton
+            aria-controls={profileAnchor ? 'profile-menu' : undefined}
+            aria-expanded={profileAnchor ? 'true' : undefined}
+            aria-haspopup="menu"
+            aria-label="Open profile menu"
+            onClick={handleProfileOpen}
+            size="small"
+          >
+            <Avatar className="profile-avatar">
+              {auth.user?.email.charAt(0).toUpperCase()}
+            </Avatar>
+          </IconButton>
+          <Menu
+            anchorEl={profileAnchor}
+            id="profile-menu"
+            onClose={() => setProfileAnchor(null)}
+            open={Boolean(profileAnchor)}
+          >
+            <MenuItem disabled>{auth.user?.email}</MenuItem>
+            <MenuItem onClick={handleSignOut}>Logout</MenuItem>
+          </Menu>
         </div>
       </Toolbar>
 
@@ -114,33 +128,6 @@ export function Header() {
                 {item.label}
               </ListItemButton>
             ))}
-            {auth.isAuthenticated ? (
-              <ListItemButton
-                onClick={() => {
-                  auth.signOut()
-                  setIsMenuOpen(false)
-                }}
-              >
-                Sign out ({auth.user?.username})
-              </ListItemButton>
-            ) : (
-              <>
-                <ListItemButton
-                  component={NavLink}
-                  onClick={() => setIsMenuOpen(false)}
-                  to="/login"
-                >
-                  Sign in
-                </ListItemButton>
-                <ListItemButton
-                  component={NavLink}
-                  onClick={() => setIsMenuOpen(false)}
-                  to="/register"
-                >
-                  Register
-                </ListItemButton>
-              </>
-            )}
           </List>
         </div>
       </Drawer>
