@@ -1,140 +1,92 @@
 # BookHaven
 
-BookHaven is a university digital-library application for discovering books,
-managing a personal reading list, tracking reading progress, and writing a
-personal review. The repository contains a React frontend and an ASP.NET Core
-Web API in one solution.
+BookHaven is a university digital-library application built with React and a
+.NET 10 Web API. Users can browse books, register or sign in, and write personal
+reviews. The project intentionally uses a small layered architecture that is
+easy to explain during coursework defense.
 
-> **Status:** foundation work is in progress. The frontend Home page and shared
-> shell exist; the backend domain schema and API contracts are defined, while
-> persistence and controllers are still planned.
+## Stack
 
-## Architecture
+- React, Vite, and TypeScript
+- React Router, TanStack React Query, and Axios
+- Material UI and Tailwind CSS
+- ASP.NET Core 10 controller API
+- Entity Framework Core with SQLite
+- JWT bearer authentication
 
-The backend follows Microsoft's guidance for a small, non-trivial monolithic
-web application: separate business rules from presentation and infrastructure,
-keep dependencies pointing inward, and use the API project as the composition
-root. This is a pragmatic layered architecture, not a microservice system and
-not a full DDD implementation.
-
-- [Common web application architectures — Microsoft Learn](https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
-- [Architectural principles — Microsoft Learn](https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles)
-- [Create web APIs with ASP.NET Core — Microsoft Learn](https://learn.microsoft.com/aspnet/core/web-api)
-
-```text
-Browser
-  -> React feature/query hook
-  -> BookHaven HTTP API
-  -> Application contract/use case
-  -> Domain model
-  -> Persistence or external-service implementation
-```
-
-The API is a single deployable application. `BookHaven.Api` references the
-implementation projects only to register them at startup; feature code should
-depend on Application abstractions instead of constructing infrastructure
-types directly.
-
-## Repository structure
+## Structure
 
 ```text
 bookhaven/
 ├── docs/
-│   ├── adr/
-│   │   └── 0000-project-structure.md
+│   ├── adr/0000-project-structure.md
 │   └── conventions/
 │       ├── be-conventions.md
 │       └── fe-conventions.md
 ├── src/
-│   ├── frontend/                    React + Vite application
+│   ├── frontend/
 │   │   └── src/
-│   │       ├── app/                 Providers, router, app entry
-│   │       ├── features/            Home, books, and My Library
-│   │       └── shared/              Shared UI and client infrastructure
+│   │       ├── app/
+│   │       ├── features/
+│   │       └── shared/
 │   └── backend/
-│       ├── BookHaven.Api/           Controllers, middleware, composition root
-│       ├── BookHaven.Application/   Use cases, ports, request/response contracts
-│       ├── BookHaven.Domain/        Entities, enums, and business rules
-│       ├── BookHaven.Persistence/   Database context, mappings, repositories
-│       ├── BookHaven.Infrastructure/ External API and technical services
-│       ├── BookHaven.Tests/         Focused unit tests; integration tests later
-│       ├── BookHaven.slnx
-│       ├── Directory.Build.props
-│       ├── Directory.Packages.props
-│       └── NuGet.Config
-├── implementation.md               Living delivery plan and schema
-└── README.md
+│       ├── BookHaven.Api/          Controller, ApiDtos, JWT, Program.cs
+│       ├── BookHaven.Application/  Service, interfaces, DTOs, mapping
+│       ├── BookHaven.Domain/       Entities, navigation properties, enums
+│       ├── BookHaven.Persistence/  DbContext, repositories, EF configurations
+│       ├── BookHaven.Tests/
+│       └── BookHaven.slnx
+└── implementation.md
 ```
 
-### Backend dependency rules
+The backend dependency flow is deliberately simple:
 
 ```text
-BookHaven.Domain       -> no project references
-BookHaven.Application -> Domain
-BookHaven.Persistence -> Application (and Domain transitively)
-BookHaven.Infrastructure -> Application (and Domain transitively)
-BookHaven.Api          -> Application + Persistence + Infrastructure
-BookHaven.Tests        -> Application + Domain
+Api -> Application -> Domain
+Api -> Persistence -> Application -> Domain
 ```
 
-## Technology
+There is no Infrastructure project, AutoMapper, MediatR, ASP.NET Identity, or
+generic repository. `BookHavenService` contains the application behavior and
+`BookHavenController` contains all HTTP endpoints.
 
-### Frontend
+## Data model
 
-- React 19, Vite, and TypeScript
-- React Router
-- TanStack React Query and Axios
-- Material UI and Tailwind CSS
-- Fraunces headings and Inter body text
+- `Book` has one `Genre` enum value, many authors through `BookAuthor`, and many
+  reviews.
+- `Author` has navigation properties back to its book joins.
+- `User` has a password hash and reviews.
+- `Review` belongs to one book and one user.
+- A user can write only one review for a book.
 
-### Backend
+DTOs are explicit at each boundary:
 
-- .NET 10 and ASP.NET Core controller-based Web API
-- Central Package Management
-- Nullable reference types and warnings as errors
-- xUnit and coverlet for the later focused test suite
-- Relational persistence through EF Core is planned; the provider is not yet
-  selected
-
-## Product scope
-
-- Home page with library introduction and featured books
-- Catalog with search, author/genre filtering, sorting, and pagination
-- Dynamic book details at `/books/:id`
-- My Library as the only saved-book collection
-- `WantToRead`, `Reading`, and `Completed` statuses
-- One personal review per saved book, with add/edit/delete operations
-- Book add/edit forms for demonstrating `POST` and `PUT`
-- About content and a custom 404 page
-
-There is no separate Favorites model. Adding a book to My Library is the saved
-book action. Authentication is intentionally out of scope; the browser keeps a
-generated anonymous client ID in LocalStorage and sends it to the API.
-
-## Getting started
-
-### Prerequisites
-
-- Node.js compatible with Vite 8
-- npm
-- .NET 10 SDK
-
-### Frontend
-
-```powershell
-cd src/frontend
-npm install
-npm run dev
+```text
+ApiDto -> Application DTO -> Repository DTO -> Entity
+Entity -> Repository DTO -> Application DTO -> ApiDto
 ```
 
-The Vite development server defaults to `http://localhost:5173`.
+All mapping is handwritten.
 
-Useful checks:
+## API
 
-```powershell
-npm run lint
-npm run build
-```
+| Method | Route | Authentication |
+| --- | --- | --- |
+| `GET` | `/api/books` | Public |
+| `GET` | `/api/books/{id}` | Public |
+| `POST` | `/api/books` | JWT |
+| `PUT` | `/api/books/{id}` | JWT |
+| `DELETE` | `/api/books/{id}` | JWT |
+| `POST` | `/api/books/{bookId}/reviews` | JWT |
+| `PUT` | `/api/reviews/{reviewId}` | JWT owner |
+| `DELETE` | `/api/reviews/{reviewId}` | JWT owner |
+| `POST` | `/api/auth/register` | Public |
+| `POST` | `/api/auth/login` | Public |
+
+The catalog accepts `search`, `genre`, `sort`, `isFeatured`, `page`, and
+`pageSize` query parameters.
+
+## Run locally
 
 ### Backend
 
@@ -144,23 +96,36 @@ dotnet restore BookHaven.slnx
 dotnet run --project BookHaven.Api/BookHaven.Api.csproj
 ```
 
-The development profiles use `http://localhost:5261` and
-`https://localhost:7070`.
+The development API runs at `http://localhost:5261`. SQLite creates the ignored
+`bookhaven.db` file automatically. The JWT key in `appsettings.Development.json` is a
+development-only value and must be replaced by environment configuration for a
+real deployment.
 
-Useful checks:
+### Frontend
 
 ```powershell
+cd src/frontend
+npm install
+npm run dev
+```
+
+The frontend defaults to `http://localhost:5173` and calls
+`http://localhost:5261/api`. Override the API with `VITE_API_BASE_URL`.
+
+### Checks
+
+```powershell
+cd src/backend
 dotnet build BookHaven.slnx --no-restore
-dotnet test BookHaven.slnx --no-build
+
+cd ../frontend
+npm run lint
+npm run build
 ```
 
 ## Documentation
 
-- [Implementation plan and proposed schema](implementation.md)
-- [Frontend conventions](docs/conventions/fe-conventions.md)
+- [Implementation status](implementation.md)
 - [Backend conventions](docs/conventions/be-conventions.md)
-- [Combined frontend/backend architecture decision](docs/adr/0000-project-structure.md)
-
-Update the implementation plan when work changes state, update a convention
-when a repeatable rule changes, and update the ADR when an architectural choice
-or its consequences change.
+- [Frontend conventions](docs/conventions/fe-conventions.md)
+- [Combined architecture decision](docs/adr/0000-project-structure.md)

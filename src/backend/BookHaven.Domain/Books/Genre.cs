@@ -1,8 +1,14 @@
 namespace BookHaven.Domain.Books;
 
-public sealed class Genre
+public enum Genre
 {
-    public Guid Id { get; set; }
-
-    public string? Name { get; set; }
+    Unknown = 0,
+    Fiction = 1,
+    ScienceFiction = 2,
+    Fantasy = 3,
+    Mystery = 4,
+    NonFiction = 5,
+    History = 6,
+    Biography = 7,
+    Romance = 8,
 }

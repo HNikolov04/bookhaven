@@ -1,37 +1,14 @@
-import type {
-  BookSummary,
-  OpenLibrarySearchDocument,
-} from '../../features/books/types'
+import type { BookApiDto, BookSummary } from '../../features/books/types'
 
 const UNKNOWN_AUTHOR = 'Unknown author'
 
-export function mapSearchDocumentToBook(
-  document: OpenLibrarySearchDocument,
-): BookSummary | null {
-  const id = document.key?.replace('/works/', '').trim()
-  const title = document.title?.trim()
-
-  if (!id || !title) {
-    return null
-  }
-
-  const authors = document.author_name
-    ?.map((author) => author.trim())
-    .filter(Boolean)
-
+export function mapBookApiDtoToBook(book: BookApiDto): BookSummary {
   return {
-    id,
-    title,
-    authors: authors?.length ? authors : [UNKNOWN_AUTHOR],
-    firstPublishYear: document.first_publish_year ?? null,
-    coverId: document.cover_i ?? null,
-    subjects: document.subject?.slice(0, 4) ?? [],
+    id: book.id,
+    title: book.title,
+    authors: book.authors.length > 0 ? book.authors : [UNKNOWN_AUTHOR],
+    firstPublishYear: book.firstPublishedYear,
+    coverUrl: book.coverUrl,
+    genre: book.genre,
   }
-}
-
-export function getBookCoverUrl(
-  coverId: number,
-  size: 'S' | 'M' | 'L' = 'M',
-) {
-  return `https://covers.openlibrary.org/b/id/${coverId}-${size}.jpg?default=false`
 }

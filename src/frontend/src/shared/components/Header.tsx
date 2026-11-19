@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Button,
   Drawer,
   IconButton,
   List,
@@ -8,6 +9,7 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { NavLink } from 'react-router'
+import { useAuth } from '../../features/auth/useAuth'
 
 const navigation = [
   { label: 'Home', to: '/' },
@@ -36,6 +38,7 @@ function MenuIcon() {
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const auth = useAuth()
 
   return (
     <AppBar className="site-header" color="transparent" elevation={0} position="sticky">
@@ -61,6 +64,25 @@ export function Header() {
         </nav>
 
         <div className="site-header__actions">
+          <div className="desktop-auth-actions">
+            {auth.isAuthenticated ? (
+              <>
+                <span className="header-username">{auth.user?.username}</span>
+                <Button onClick={auth.signOut} size="small" variant="outlined">
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button component={NavLink} size="small" to="/login">
+                  Sign in
+                </Button>
+                <Button component={NavLink} size="small" to="/register" variant="contained">
+                  Register
+                </Button>
+              </>
+            )}
+          </div>
           <IconButton
             aria-label="Open navigation"
             className="header-icon-button mobile-menu-button"
@@ -92,6 +114,33 @@ export function Header() {
                 {item.label}
               </ListItemButton>
             ))}
+            {auth.isAuthenticated ? (
+              <ListItemButton
+                onClick={() => {
+                  auth.signOut()
+                  setIsMenuOpen(false)
+                }}
+              >
+                Sign out ({auth.user?.username})
+              </ListItemButton>
+            ) : (
+              <>
+                <ListItemButton
+                  component={NavLink}
+                  onClick={() => setIsMenuOpen(false)}
+                  to="/login"
+                >
+                  Sign in
+                </ListItemButton>
+                <ListItemButton
+                  component={NavLink}
+                  onClick={() => setIsMenuOpen(false)}
+                  to="/register"
+                >
+                  Register
+                </ListItemButton>
+              </>
+            )}
           </List>
         </div>
       </Drawer>

@@ -132,6 +132,7 @@ secrets.json
 *.key
 
 # Local development databases and SQL Server files
+**/bookhaven.db*
 *.local.db
 *.local.sqlite
 *.local.sqlite3

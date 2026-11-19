@@ -2,7 +2,6 @@ import { IconButton } from '@mui/material'
 import { Link } from 'react-router'
 import type { BookSummary } from '../../features/books/types'
 import { useMyLibrary } from '../../features/library/useMyLibrary'
-import { getBookCoverUrl } from '../utils/bookMappers'
 
 type BookCardProps = {
   book: BookSummary
@@ -30,13 +29,13 @@ export function BookCard({ book }: BookCardProps) {
   return (
     <article className="book-card">
       <div className="book-card__cover-wrap">
-        {book.coverId ? (
+        {book.coverUrl ? (
           <img
             alt={`Cover of ${book.title}`}
             className="book-card__cover"
             height="360"
             loading="lazy"
-            src={getBookCoverUrl(book.coverId)}
+            src={book.coverUrl}
             width="240"
           />
         ) : (

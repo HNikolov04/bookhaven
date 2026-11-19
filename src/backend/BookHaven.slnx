@@ -15,9 +15,6 @@
   <Folder Name="/03.Persistence/">
     <Project Path="BookHaven.Persistence/BookHaven.Persistence.csproj" />
   </Folder>
-  <Folder Name="/04.Infrastructure/">
-    <Project Path="BookHaven.Infrastructure/BookHaven.Infrastructure.csproj" />
-  </Folder>
   <Folder Name="/05.Tests/">
     <Project Path="BookHaven.Tests/BookHaven.Tests.csproj" />
   </Folder>

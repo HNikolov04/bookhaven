@@ -1,34 +1,14 @@
 import { axiosClient } from '../../../shared/api/axiosClient'
-import { mapSearchDocumentToBook } from '../../../shared/utils/bookMappers'
-import type { BookSummary, OpenLibrarySearchResponse } from '../types'
-
-const FEATURED_FIELDS = [
-  'key',
-  'title',
-  'author_name',
-  'first_publish_year',
-  'cover_i',
-  'subject',
-].join(',')
+import { mapBookApiDtoToBook } from '../../../shared/utils/bookMappers'
+import type { BookApiDto, BookSummary, PagedApiDto } from '../types'
 
 export async function getFeaturedBooks(): Promise<BookSummary[]> {
-  const response = await axiosClient.get<OpenLibrarySearchResponse>('/search.json', {
+  const response = await axiosClient.get<PagedApiDto<BookApiDto>>('/books', {
     params: {
-      q: 'subject:classics language:eng',
-      fields: FEATURED_FIELDS,
-      limit: 12,
+      isFeatured: true,
+      page: 1,
+      pageSize: 4,
     },
   })
-
-  const uniqueBooks = new Map<string, BookSummary>()
-
-  for (const document of response.data.docs ?? []) {
-    const book = mapSearchDocumentToBook(document)
-
-    if (book?.coverId && !uniqueBooks.has(book.id)) {
-      uniqueBooks.set(book.id, book)
-    }
-  }
-
-  return [...uniqueBooks.values()].slice(0, 4)
+  return response.data.items.map(mapBookApiDtoToBook)
 }

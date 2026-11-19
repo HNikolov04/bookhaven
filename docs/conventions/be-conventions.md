@@ -1,237 +1,112 @@
 # BookHaven Backend Conventions
 
-This is the living source of truth for repeatable backend rules. Update it when
-the team changes a rule that should apply to more than one feature. Record
-architecturally significant choices in `docs/adr/0000-project-structure.md` and
-delivery progress in the root `implementation.md`.
+This file contains reusable backend rules. Keep delivery status in the root
+`implementation.md` and cross-stack decisions in the single ADR.
 
-## 1. Scope and architecture
+## Projects
 
-- Target .NET 10 and use an ASP.NET Core controller-based Web API.
-- Build one modular monolith. Do not introduce microservices, messaging, or
-  distributed-system patterns for coursework scope.
-- Follow a pragmatic Clean Architecture dependency direction inspired by
-  Microsoft's web architecture guidance.
-- Keep the model CRUD-oriented. Do not add DDD patterns unless a concrete
-  business rule needs them.
-- `BookHaven.Api` is the presentation layer and composition root.
-- The backend owns catalog, My Library, reading-status, and review data.
-- Open Library is an optional upstream data source behind Infrastructure; it is
-  never exposed as a transport model to the frontend.
-- Authentication and authorization are out of scope. A generated anonymous
-  browser client ID scopes My Library data.
+| Project | Responsibility |
+| --- | --- |
+| `BookHaven.Domain` | Entities, navigation properties, and enums |
+| `BookHaven.Application` | Interfaces, DTOs, mappings, validation, and one service |
+| `BookHaven.Persistence` | EF Core DbContext, repositories, and configurations |
+| `BookHaven.Api` | ApiDtos, manual mapping, JWT, one controller, and composition root |
+| `BookHaven.Tests` | Simple unit tests added after behavior stabilizes |
 
-## 2. Project responsibilities and dependencies
+- Dependencies point toward Domain.
+- There is no Infrastructure layer.
+- Do not add MediatR, AutoMapper, ASP.NET Identity, or a generic repository.
+- `BookHavenService` is the single application service.
+- `BookHavenController` contains all endpoints.
 
-| Project | Owns | May depend on |
-| --- | --- | --- |
-| `BookHaven.Domain` | Entities, enums, invariant constants, domain behavior | Nothing |
-| `BookHaven.Application` | Use cases, ports, queries, commands, API-neutral contracts | Domain |
-| `BookHaven.Persistence` | EF Core context, mappings, migrations, data-access implementations | Application |
-| `BookHaven.Infrastructure` | Open Library client and other technical integrations | Application |
-| `BookHaven.Api` | Controllers, middleware, HTTP mapping, DI registration | Application, Persistence, Infrastructure |
-| `BookHaven.Tests` | Focused unit tests initially | Application, Domain |
+## Naming
 
-Dependencies point toward Domain/Application. Domain code must not reference
-ASP.NET Core, EF Core, JSON, HTTP, or configuration packages. The API may call
-Persistence and Infrastructure extension methods from `Program.cs`, but
-controllers must depend on Application services or ports.
+- Use `Api`, `Dto`, `Id`, and `Url` casing.
+- Async methods end with `Async` and accept `CancellationToken` last.
+- Namespaces mirror folders.
+- Use file-scoped namespaces, nullable reference types, and warnings as errors.
+- Concrete types are `sealed` unless inheritance is intentional.
 
-Expected folders:
+## Entities
+
+- Entities live only in Domain and contain navigation properties.
+- `Book.Genre` uses the `Genre` enum; there is no Genre table or `BookGenre`.
+- Books and authors use the explicit `BookAuthor` join entity.
+- Reviews reference both `Book` and `User`.
+- A unique `(BookId, UserId)` index enforces one review per user per book.
+- Timestamps use `DateTimeOffset` and the `Utc` suffix.
+- Passwords are never stored directly; the service stores PBKDF2 hashes.
+
+## DTO and mapping flow
+
+Every boundary owns a DTO:
 
 ```text
-BookHaven.Domain/
-  Books/
-  Library/
-BookHaven.Application/
-  Books/
-    Contracts/
-  Library/
-    Contracts/
-  Common/
-BookHaven.Persistence/
-  Configurations/
-  Migrations/
-  Repositories/
-BookHaven.Infrastructure/
-  OpenLibrary/
-BookHaven.Api/
-  Controllers/
-  Middleware/
-  Extensions/
+ApiDto <-> Application DTO <-> Repository DTO <-> Domain entity
 ```
 
-Create folders when they contain real code; do not add placeholder classes.
+- Mapping is handwritten in the owning layer.
+- API controllers never return entities or repository DTOs.
+- Persistence never returns tracked entities outside the project.
+- Do not introduce AutoMapper.
 
-## 3. Naming and C# style
+## Repositories
 
-- Namespaces mirror project and folder names, for example
-  `BookHaven.Application.Books.Contracts`.
-- Use PascalCase for types, methods, properties, enum members, and constants.
-- Use camelCase for parameters and local variables.
-- Prefix interfaces with `I` only when the abstraction has multiple meaningful
-  implementations or separates Application from an external concern.
-- Async methods end with `Async` and accept a `CancellationToken` as the last
-  parameter when they perform I/O.
-- Use `Api`, not `API`, in project and namespace names. Acronyms read as normal
-  PascalCase words (`Id`, `Url`, `Http`).
-- Enable nullable reference types. Do not use the null-forgiving operator to
-  silence uncertain input.
-- Prefer file-scoped namespaces and one primary public type per file. Closely
-  related request or response records may share a file.
-- Use `sealed` by default for concrete application classes and records not
-  designed for inheritance.
-- Use collection expressions and modern language features only when they keep
-  the code clear to explain during the coursework defense.
-
-## 4. Domain and schema rules
-
-- Use `Guid` identifiers generated by the application or database consistently.
-- Store timestamps as `DateTimeOffset` in UTC and suffix properties with `Utc`.
-- A `Book` has zero or more authors and genres through explicit `BookAuthor` and
-  `BookGenre` join entities.
-- Author display order is stored on `BookAuthor`.
-- `OpenLibraryWorkId` and `OpenLibraryAuthorId` are optional integration keys,
-  not primary keys.
-- `Genre.Slug` is the stable, URL-safe genre identifier.
-- A unique `(ClientId, BookId)` pair identifies one My Library entry.
-- Reading status is one of `WantToRead`, `Reading`, or `Completed`.
-- A library entry has at most one review. `Review.LibraryEntryId` is unique.
-- Ratings are integers from 1 to 5; review text is required after trimming.
-- “Favorites” is not a separate entity or table. My Library is the single
-  saved-book concept.
-- Domain entities contain no EF Core attributes. Database rules belong in
-  Persistence configurations.
-
-Length/range rules live beside the domain types in `BookRules` and
-`ReviewRules`. Application validation and persistence mapping must reuse those
-values rather than duplicate magic numbers.
-
-## 5. Application contracts and use cases
-
-- HTTP request/response contracts live in Application so controllers remain
-  thin and the same use cases can be tested without HTTP.
-- Use records for immutable request and response contracts.
-- Never return EF entities from controllers.
-- Query responses use `PagedResult<T>` for catalog pagination.
-- Catalog query state supports search text, author, genre, sort, featured flag,
-  page, and page size.
-- Default page size is 20; reject or clamp values above 100 at the API boundary.
-- Create and update contracts accept author and genre names. Application logic
-  normalizes and reuses existing records by normalized name/slug.
-- Keep command/query handlers simple. Do not introduce MediatR unless repeated
-  orchestration proves it valuable.
-- Use one service/use-case class per coherent feature rather than a generic
-  “manager” or generic repository abstraction.
-
-## 6. HTTP API conventions
-
-Use resource-oriented routes under `/api`:
-
-| Method and route | Purpose |
-| --- | --- |
-| `GET /api/books` | Search/filter/sort/page books |
-| `GET /api/books/{id:guid}` | Get book details |
-| `POST /api/books` | Add a book |
-| `PUT /api/books/{id:guid}` | Replace editable book data |
-| `DELETE /api/books/{id:guid}` | Remove a book when allowed |
-| `GET /api/library` | Get the current anonymous client's library |
-| `POST /api/library` | Add a book with an initial status |
-| `PUT /api/library/{bookId:guid}` | Change reading status |
-| `DELETE /api/library/{bookId:guid}` | Remove a saved book |
-| `POST /api/library/{bookId:guid}/review` | Add the personal review |
-| `PUT /api/library/{bookId:guid}/review` | Edit the personal review |
-| `DELETE /api/library/{bookId:guid}/review` | Delete the personal review |
-
-- Read the anonymous owner from `X-BookHaven-Client-Id` as a GUID. The frontend
-  stores this ID in LocalStorage; the API validates it but does not treat it as
-  authentication.
-- Controllers use `[ApiController]`, attribute routing, and constructor
-  injection.
-- Controllers validate HTTP concerns, delegate to Application, and map outcomes
-  to status codes. They contain no EF queries or business workflows.
-- Return `200` for successful reads/updates, `201` with `Location` for creates,
-  and `204` for successful deletes.
-- Return `400` for invalid input, `404` for missing resources, and `409` for a
-  conflict such as adding an existing library entry or duplicate review.
-- Use RFC 7807 Problem Details for errors. Never expose stack traces, SQL, or
-  upstream response bodies.
-- Serialize enums as stable camelCase strings at the HTTP boundary.
-- Cancellation tokens flow from controller actions through all async I/O.
-
-## 7. Validation and errors
-
-- Treat every HTTP body, route value, query string, database value, and upstream
-  response as untrusted input.
-- Trim user-entered strings before validating or persisting them.
-- Validate required values, maximum lengths, year range, URL shape, page bounds,
-  enum values, rating range, and collection duplicates.
-- Validation errors identify the affected field and use user-safe language.
-- Expected outcomes use explicit result values or typed exceptions translated
-  once by middleware. Do not scatter broad `try/catch` blocks through actions.
-- Log failures with context and identifiers, but never log full review text or
-  secrets.
-
-## 8. Persistence
-
-- Use EF Core configurations in `BookHaven.Persistence`; provider choice remains
-  deferred until the persistence phase.
-- Configure all keys, foreign keys, unique indexes, lengths, required fields,
-  delete behavior, and enum conversion explicitly.
-- Required unique indexes: optional external book/author IDs when present,
-  genre slug, `(BookId, AuthorId)`, `(BookId, GenreId)`, `(ClientId, BookId)`, and
-  `Review.LibraryEntryId`.
-- Avoid lazy loading. Queries explicitly project into Application responses or
-  load the relationships they need.
-- Use `AsNoTracking` for read-only queries.
+- Interfaces live in `BookHaven.Application/Interfaces`.
+- Repository boundary DTOs live in `Application/Interfaces/Dtos`.
+- Implementations live in `BookHaven.Persistence/Repositories`.
+- `BookRepository` owns book queries, CRUD, and book-review persistence.
+- `UserRepository` contains only the persistence required by register/login.
+- Use `AsNoTracking` for reads and `AsSplitQuery` for multiple collections.
 - Do not expose `IQueryable` outside Persistence.
-- Migrations are reviewed source files and must not contain environment-specific
-  connection strings.
-- Configuration files contain no credentials. Development secrets belong in
-  user secrets or environment variables.
 
-## 9. External Open Library integration
+## Service
 
-- Use a typed `HttpClient` in `BookHaven.Infrastructure`.
-- Application defines the port and normalized models it needs; Infrastructure
-  owns Open Library transport types and mapping.
-- Request only needed fields, apply timeouts, and keep retries conservative.
-- Cache or persist normalized results to avoid one upstream request per book
-  card.
-- Missing cover, year, author, or description is valid incomplete data, not an
-  exception.
-- The frontend calls BookHaven's API, not Open Library directly, after the
-  backend catalog endpoint is available.
+`BookHavenService` owns:
 
-## 10. Package and build management
+- query normalization and paging bounds;
+- book and review validation;
+- registration and login behavior;
+- password hashing/verification;
+- orchestration between repositories and token generation.
 
-- Common build rules belong in `Directory.Build.props`.
-- Package versions belong in `Directory.Packages.props`; project files declare
-  package references without versions.
-- Add the package to the narrowest project that owns the concern.
-- Keep warnings as errors and do not suppress warnings without a documented,
-  narrow reason.
-- Do not edit generated `bin`, `obj`, OpenAPI, or migration snapshot output by
-  hand.
+Controllers stay thin and translate HTTP input/output only.
 
-## 11. Testing
+## Entity Framework Core
 
-Start with a small deterministic unit suite after use cases and validation exist:
+- SQLite is the development provider.
+- Every entity has its own `IEntityTypeConfiguration<T>` file.
+- Configure keys, lengths, relationships, conversions, indexes, and delete
+  behavior explicitly.
+- Store `Genre` as its string name.
+- Keep package versions in `Directory.Packages.props`.
+- The current coursework setup uses `EnsureCreated`; introduce migrations only
+  if deployment or schema evolution requires them.
 
-- book create/update validation;
-- catalog query normalization and paging;
-- rating and review-text rules;
-- one-review-per-library-entry conflict behavior;
-- reading-status transitions;
-- anonymous client ID validation;
-- response mapping without optional book fields.
+## HTTP and JWT
 
-Unit tests must not need a real database, network, clock, or environment
-configuration. Add Persistence and API integration tests later when EF Core and
-controllers exist. Name tests `Method_Scenario_ExpectedResult` and keep each
-test focused on one behavior.
+- Routes start with `/api`.
+- Reads are public; book writes and review writes require JWT.
+- Review update/delete operations use the authenticated user ID.
+- Registration/login return an `AuthApiDto` containing token and user.
+- JWT expiry is two hours.
+- Keep the development signing key out of real deployments. Production keys
+  must come from environment configuration or secret storage.
+- Return `201` for creates, `204` for deletes, `404` for missing resources,
+  `409` for duplicates, and validation Problem Details for invalid input.
 
-Before backend work is complete:
+## Validation
+
+- Trim all user text before persistence.
+- Title: required, maximum 300 characters.
+- Description: maximum 5,000 characters.
+- Author: at least one, maximum 200 characters each.
+- Review: rating 1-5 and non-empty text up to 2,000 characters.
+- Username: 3-50 characters.
+- Password: 6-100 characters for coursework scope.
+- Email must have a valid shape and is normalized to lowercase.
+
+## Quality checks
 
 ```powershell
 dotnet restore BookHaven.slnx
@@ -239,10 +114,5 @@ dotnet build BookHaven.slnx --no-restore
 dotnet test BookHaven.slnx --no-build
 ```
 
-## 12. Documentation discipline
-
-- Update this file when a reusable backend rule changes.
-- Update `docs/conventions/fe-conventions.md` for client-only rules.
-- Keep cross-stack decisions together in the single ADR.
-- Update the root `implementation.md` whenever a backend item changes status or
-  the proposed schema/API contract changes.
+Unit tests remain small and target service validation, mapping, password
+verification, and repository-independent behavior.
