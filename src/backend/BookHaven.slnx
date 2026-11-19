@@ -6,7 +6,7 @@
     <File Path="NuGet.Config" />
   </Folder>
   <Folder Name="/01.Presentation/">
-      <Project Path="BookHaven.Api/BookHaven.Api.csproj" />
+    <Project Path="BookHaven.Api/BookHaven.Api.csproj" />
   </Folder>
   <Folder Name="/02.Core/">
     <Project Path="BookHaven.Application/BookHaven.Application.csproj" />

@@ -1,16 +1,19 @@
-# BookHaven Engineering Conventions
+# BookHaven Frontend Conventions
 
 This document is the shared source of truth for implementation conventions in
 BookHaven. Update it when the team adopts a repeatable rule. Record one-off or
-architecturally significant decisions in `docs/adr/` instead.
+architecturally significant frontend/backend decisions together in
+`docs/adr/0000-project-structure.md` instead.
 
 ## 1. Product boundaries
 
-- BookHaven is a frontend-only university coursework application.
-- Open Library is the only remote book-data source.
-- My Library membership, reading status, and personal reviews belong to the
-  current browser and are persisted in LocalStorage.
-- There is no authentication, backend, database, or simulated server.
+- BookHaven is the React client of the BookHaven ASP.NET Core API.
+- The BookHaven API is the frontend's only remote data source. Open Library is
+  accessed by the backend when external data is needed.
+- My Library membership, reading status, and personal reviews are server state
+  scoped by an anonymous browser client ID.
+- There is no login or authentication flow. LocalStorage persists only the
+  generated client ID and explicitly approved UI preferences.
 - Prefer code that is easy to demonstrate and explain over abstractions that are
   only justified by hypothetical future requirements.
 - Every page must handle loading, error, empty, and populated states where those
@@ -84,17 +87,17 @@ Rules:
   an acceptable reason for a default export.
 - Name query hooks with the `Query` suffix and local data hooks after the user
   action/domain, for example `useBookDetailsQuery` and `useMyLibrary`.
-- Use the Open Library work ID without `/works/` as the canonical `bookId`, for
-  example `OL45804W`.
+- Use the API's `Guid` book ID as the canonical `bookId`. Treat an Open Library
+  work ID as optional metadata, never as the application route key.
 
 ## 4. TypeScript
 
 - Keep TypeScript strict; do not weaken compiler settings to make an error pass.
 - Do not use `any`. Use `unknown` at untrusted boundaries and narrow it.
 - API transport types and UI domain types are different types.
-- Normalize optional Open Library fields once in mapper functions. Components
-  consume predictable domain models and should not know API field names such as
-  `cover_i` or `author_name`.
+- Validate and normalize API responses at the feature boundary when needed.
+  Components consume predictable frontend models and must not depend on
+  database entities or upstream Open Library field names.
 - Prefer unions for finite states:
 
 ```ts
@@ -106,8 +109,8 @@ export type ReadingStatus = 'want-to-read' | 'reading' | 'completed';
 - Use `satisfies` for configuration objects when it preserves useful inference.
 - Avoid non-null assertions. Handle missing remote data with an explicit
   fallback or state.
-- Dates stored locally use ISO 8601 strings. Display dates through a formatter;
-  do not format them at persistence boundaries.
+- API dates use ISO 8601 strings. Display dates through a formatter; do not
+  format them at transport boundaries.
 
 ## 5. React
 
@@ -119,8 +122,8 @@ export type ReadingStatus = 'want-to-read' | 'reading' | 'completed';
 - Do not call hooks conditionally.
 - Do not use an effect to compute values that can be computed during render.
 - Effects are reserved for synchronization with systems outside React.
-- Use stable Open Library work IDs as list keys; never use an array index for a
-  list that can change order.
+- Use stable API book IDs as list keys; never use an array index for a list that
+  can change order.
 - Show destructive actions such as deleting a review with a confirmation step.
 
 ## 6. Routing and URL state
@@ -144,8 +147,8 @@ Routes:
 - A change to query, search field, genre, or sort resets `page` to `1`.
 - Debounce only the text search value (target: 300-400 ms), not selects or
   pagination.
-- The details route receives a plain work ID. Validate the `OL...W` shape before
-  requesting data; invalid or missing works render a useful not-found state.
+- The details route receives the API book GUID. Validate its shape before
+  requesting data; invalid or missing books render a useful not-found state.
 - Restore focus or move focus to the main heading after route changes where
   needed for keyboard and screen-reader users.
 
@@ -153,9 +156,9 @@ Routes:
 
 ### Boundary
 
-All HTTP requests must be made by the configured Axios client from inside custom
-React Query hooks. Components must never import Axios, call `fetch`, or assemble
-Open Library URLs.
+All HTTP requests must be made by the configured Axios client through feature
+API functions called by custom React Query hooks. Components must never import
+Axios, call `fetch`, or assemble API URLs.
 
 ```text
 component -> custom query hook -> feature API function -> Axios client -> API
@@ -163,31 +166,35 @@ component -> custom query hook -> feature API function -> Axios client -> API
                                       +-> transport type -> mapper -> domain type
 ```
 
-- Base URL: `https://openlibrary.org`.
-- Cover URLs are built by one helper using
-  `https://covers.openlibrary.org/b/id/{coverId}-{size}.jpg?default=false`.
-- Use HTTPS only.
+- Development base URL: `http://localhost:5261/api`, supplied through a
+  `VITE_API_BASE_URL` environment variable or Vite proxy configuration.
+- The API returns a complete optional `coverUrl`; components never assemble an
+  Open Library cover URL.
+- Use HTTPS outside local development.
 - The Axios client owns base configuration and response/error normalization.
 - API modules own endpoint paths and request/response transport types.
 - Query hooks own query keys, enablement, stale time, and calls to API modules.
-- Mapper modules convert API shapes into the app's domain models.
-- Request only the Search API fields the UI uses; never request `fields=*`.
+- Mapper modules convert API responses into frontend models when the shapes
+  intentionally differ.
+- Send only supported query parameters; never mirror the whole filter object
+  blindly into an Axios request.
 - Do not retry a confirmed `404`. Keep retries low for other failures.
-- React Query caching and debounced searches are part of API politeness, not just
-  performance optimizations.
+- React Query caching and debounced searches reduce unnecessary API work and
+  keep the interface responsive.
 
 ### Planned API usage
 
 | Use case | Endpoint/strategy |
 | --- | --- |
-| Catalog search | `GET /search.json` with explicit `fields`, `page`, and `limit` |
-| Genre browse/filter | Search query constrained by subject; keep genre slugs in app configuration |
-| Book details | `GET /works/{workId}.json` plus an exact Search API lookup for normalized author/cover metadata |
-| Covers | Cover ID URL from the Covers API with a local visual fallback |
-| Featured books | A small, deterministic subject/search query cached with a longer stale time |
+| Catalog search | `GET /api/books` with search, author, genre, sort, page, and page size |
+| Featured books | `GET /api/books?isFeatured=true` with a small page size |
+| Book details | `GET /api/books/{bookId}` |
+| Book form | `POST /api/books` and `PUT /api/books/{bookId}` |
+| My Library | `GET`, `POST`, `PUT`, and `DELETE` under `/api/library` |
+| Personal review | `POST`, `PUT`, and `DELETE` under `/api/library/{bookId}/review` |
 
-The Search API supports one-based `page` pagination. Store the UI page as
-one-based too, so no conversion is scattered across components.
+The BookHaven API uses one-based pages. Store the UI page as one-based too, so
+no conversion is scattered across components.
 
 ### Query keys
 
@@ -200,7 +207,7 @@ export const bookKeys = {
   lists: () => [...bookKeys.all, 'list'] as const,
   list: (params: BookSearchParams) => [...bookKeys.lists(), params] as const,
   details: () => [...bookKeys.all, 'detail'] as const,
-  detail: (workId: string) => [...bookKeys.details(), workId] as const,
+  detail: (bookId: string) => [...bookKeys.details(), bookId] as const,
 };
 ```
 
@@ -208,8 +215,8 @@ export const bookKeys = {
 - Use `enabled` for queries that require a validated ID or non-empty input.
 - Use `placeholderData` intentionally when retaining the previous catalog page
   improves pagination; expose that transitional state in the UI.
-- Query invalidation is for remote server state. Do not invalidate queries for a
-  LocalStorage update.
+- Mutations invalidate only affected remote query keys. For example, updating a
+  review invalidates that library entry and the library list, not every book.
 
 ### Remote errors
 
@@ -220,74 +227,36 @@ export const bookKeys = {
 - A missing cover, author, year, or description is incomplete data, not a failed
   page. Render the agreed fallback text or artwork.
 
-### Open Library constraints
+### Anonymous client header
 
-- This is a low-volume educational client. Avoid background refetch churn and
-  bulk requests.
-- A browser cannot set the forbidden `User-Agent` header. Do not attempt to work
-  around that frontend platform restriction; stay within the default public API
-  limit by caching, debouncing, and avoiding per-card metadata requests.
-- Never make a follow-up HTTP request for every card in a results grid.
-- The Search and Subjects APIs can change. Their response shapes remain isolated
-  in the API and mapper layers.
-
-Official references:
-
-- [Open Library API overview and usage guidance](https://openlibrary.org/developers/api)
-- [Search API](https://openlibrary.org/dev/docs/api/search)
-- [Book and Works APIs](https://openlibrary.org/dev/docs/api/books)
-- [Covers API](https://openlibrary.org/dev/docs/api/covers)
-- [Subjects API](https://openlibrary.org/dev/docs/api/subjects)
+- Generate one GUID on first use and persist it under
+  `bookhaven.client-id.v1`.
+- Send it as `X-BookHaven-Client-Id` for My Library and review requests.
+- Treat it as a scope key, not a credential. Never display it or claim that it
+  provides authentication.
+- Keep header attachment in the configured Axios client/interceptor, not in
+  individual components.
 
 ## 8. Local user data
 
-LocalStorage is local state, not server state. Do not wrap it in Axios, React
-Query, fake promises, or mutations.
-
-Expose reusable synchronous hooks backed by a small typed storage adapter:
-
-- `useMyLibrary()`
-- `useReviews()` only if review behavior grows beyond the library hook
+LocalStorage is used for the anonymous client ID and approved presentation
+preferences only. Books, library entries, statuses, and reviews are server
+state handled by React Query mutations and queries.
 
 Storage keys are versioned and namespaced:
 
 ```text
-bookhaven.library.v1
+bookhaven.client-id.v1
 ```
 
-Store a normalized `BookSummary` snapshot with each My Library item. This keeps
-the page useful after refresh without issuing one remote request per saved book.
-Fresh remote detail data may replace a snapshot when the user opens that book.
-
-Conceptual persisted shapes:
-
-```ts
-type LibraryRecord = {
-  book: BookSummary;
-  status: ReadingStatus;
-  review: PersonalReview | null;
-  updatedAt: string;
-};
-
-type PersonalReview = {
-  id: string;
-  rating: 1 | 2 | 3 | 4 | 5;
-  text: string;
-  createdAt: string;
-  updatedAt: string;
-};
-```
-
-- There is at most one personal review per library book. Across books, the user
-  can add, edit, and delete reviews.
-- Parse persisted JSON defensively. Corrupt or outdated values fall back safely
-  instead of crashing the application.
+- Generate the ID once with `crypto.randomUUID()` and validate a stored value
+  before reusing it.
+- If the stored ID is missing or malformed, replace it with a new one.
 - Storage writes are immutable and centralized.
 - Keep state synchronized across tabs using the browser `storage` event.
-- UI actions update React state and LocalStorage together through the hook API.
 - Do not persist transient UI state such as dialogs, search input, or loading.
-- My Library is the only saved-book collection; do not introduce a parallel
-  favorites collection or storage key.
+- Do not cache API response objects in LocalStorage. React Query owns the
+  in-memory server-state cache.
 
 ## 9. Styling and design system
 
@@ -380,11 +349,11 @@ Spacing, radius, and other non-color properties do not use the `--ink-` prefix.
 
 Testing should prioritize behavior that carries product risk:
 
-- API mappers with missing and irregular Open Library fields.
+- API response mapping with missing optional book fields.
 - Catalog URL parameter parsing and query construction.
 - Query hooks with mocked HTTP responses.
-- LocalStorage parsing, updates, corruption fallback, and versioned keys.
-- My Library membership toggling, reading-status transitions, and review CRUD.
+- Anonymous client ID creation, validation, and header attachment.
+- My Library queries/mutations, reading-status transitions, and review CRUD.
 - Route rendering, including invalid detail IDs and the wildcard 404.
 - A representative responsive and keyboard-accessibility pass.
 
@@ -406,7 +375,7 @@ the exception is safe and necessary.
 - Do not commit `.env` files, generated build output, or local editor state.
 - Public environment variables use Vite's `VITE_` prefix and contain no secrets.
   A frontend application cannot keep secrets.
-- Update `docs/implementation.md` as work moves between planned, in progress,
+- Update the root `implementation.md` as work moves between planned, in progress,
   blocked, and complete.
 - Update this file only for a reusable convention.
 - Add an ADR when a decision has meaningful alternatives or long-term
@@ -421,4 +390,4 @@ When adding a convention:
 3. Avoid duplicating tool documentation.
 4. Note exceptions explicitly.
 5. Change existing code or create a follow-up item in
-   `docs/implementation.md` so the documentation and code do not drift.
+   `implementation.md` so the documentation and code do not drift.
