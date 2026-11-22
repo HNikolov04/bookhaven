@@ -37,8 +37,8 @@
 - [x] Simplified all card borders to standard solid borders.
 - [x] Renamed the application service and interface to `BookService` and
   `IBookService`.
-- [x] Consolidated the interface into a minimal white-and-gray palette with no
-  orange accents or gradients.
+- [x] Kept white and gray as the interface foundation with black interaction
+  states and buttons, red favourite hearts, gold ratings, and no gradients.
 - [x] Added pointer feedback to interactive controls and underline-only header
   navigation states.
 - [x] Reworked the profile avatar and dropdown with a neutral person icon.
@@ -47,12 +47,19 @@
 - [x] Aligned catalogue filters in a white panel beside the complete card grid.
 - [x] Reworked book reviews into a server-backed summary, rating breakdown,
   review list, and centered rating/text modal without a display-name field.
-- [x] Replaced constructed home and 404 artwork with responsive grayscale image
+- [x] Replaced constructed home and 404 artwork with responsive color image
   assets and removed the obsolete illustration markup/styles.
 - [x] Removed the catalogue result-count row and made the filter panel size to
   its own content.
 - [x] Reduced desktop navigation sizing, enlarged the profile control, and
   removed extra profile-menu list spacing.
+- [x] Removed custom Fraunces/Inter font packages and overrides in favour of
+  MUI's standard system typography.
+- [x] Standardized functional icon rendering through MUI `SvgIcon`; only the
+  BookHaven logo remains a custom brand SVG.
+- [x] Added subtle reduced-motion-safe animation to the home and 404 images.
+- [x] Made complete book cards open their details route while preserving the
+  independent favourite action.
 
 ## Current schema
 

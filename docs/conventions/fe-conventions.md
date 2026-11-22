@@ -36,17 +36,24 @@
 
 - Strict TypeScript, no `any`, and named exports.
 - One clear `h1` per page and labelled controls.
-- Use MUI for controls/feedback and CSS/Tailwind for layout.
+- Use MUI as the only component library. Use Tailwind/CSS for responsive layout
+  and project-specific styling.
 - Every CSS color custom property begins with `--ink-`.
-- Keep the interface monochrome: white and neutral grays only, with restrained
-  5 px corners. Do not use gradients or decorative accent colors.
+- Use the default MUI/system typography stack. Do not install or import custom
+  web fonts.
+- Keep white and neutral gray as the foundation, with black interaction states,
+  red favourite hearts, and gold rating stars.
+- Keep restrained 5 px corners and do not use gradients.
 - Center desktop navigation within the full-width header independently of the
   brand and profile controls.
 - Keep filters in a white panel aligned with the catalogue card results.
-- Prefer responsive image assets for editorial illustrations; do not construct
+- Prefer responsive color image assets for editorial illustrations; do not construct
   detailed artwork from nested HTML or inline SVG shapes.
 - Let filter panels size to their content instead of stretching to match result
   columns.
+- Keep editorial-image motion subtle and disable it for reduced-motion users.
+- Make the entire book card the details link while keeping its favourite button
+  as a separate action above the link layer.
 
 ## Verification
 

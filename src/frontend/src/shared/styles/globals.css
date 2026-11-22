@@ -8,15 +8,17 @@
 }
 
 :root {
-  font-family: Inter, system-ui, sans-serif;
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  --ink-primary: #4b4b4b;
+  --ink-primary: #202020;
   --ink-primary-deep: #202020;
-  --ink-accent: #4b4b4b;
-  --ink-accent-dark: #2f2f2f;
-  --ink-accent-soft: #f0f0f0;
+  --ink-accent: #202020;
+  --ink-accent-dark: #000000;
+  --ink-accent-soft: #f3f3f3;
+  --ink-favourite: #dc2626;
+  --ink-favourite-soft: #fef2f2;
+  --ink-rating: #f59e0b;
   --ink-background: #ffffff;
   --ink-background-muted: #f5f5f5;
   --ink-background-warm: #eeeeee;
@@ -109,7 +111,6 @@ img {
 .section-heading {
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: clamp(2rem, 4vw, 3.25rem);
   line-height: 1.08;
 }
@@ -161,7 +162,6 @@ img {
   align-items: center;
   gap: 0.6rem;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: 1.15rem;
   font-weight: 700;
   text-decoration: none;
@@ -361,7 +361,6 @@ img {
   gap: 0.6rem;
   padding: 0 0.75rem 1.25rem;
   border-bottom: 1px solid var(--ink-border-soft);
-  font-family: Fraunces, Georgia, serif;
   font-size: 1.2rem;
   font-weight: 700;
 }
@@ -416,7 +415,6 @@ img {
   max-width: 12ch;
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: clamp(2.9rem, 6vw, 4.75rem);
   line-height: 1.02;
   letter-spacing: -0.035em;
@@ -460,6 +458,14 @@ img {
   width: 100%;
   height: auto;
   object-fit: contain;
+  transform-origin: center;
+  animation: hero-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-8px) rotate(-0.6deg); }
 }
 
 .featured-section {
@@ -502,6 +508,18 @@ img {
   transform: translateY(-4px);
 }
 
+.book-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.book-card__link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ink-focus) 45%, transparent);
+  outline-offset: 3px;
+}
+
 .book-card__cover-wrap {
   position: relative;
 }
@@ -535,7 +553,6 @@ img {
 }
 
 .book-card__cover--fallback strong {
-  font-family: Fraunces, Georgia, serif;
   font-size: 1.35rem;
 }
 
@@ -547,12 +564,13 @@ img {
   height: 38px;
   border: 1px solid var(--ink-border-soft);
   background: var(--ink-surface);
-  color: var(--ink-accent);
+  color: var(--ink-favourite);
   box-shadow: 0 6px 14px var(--ink-shadow);
+  z-index: 2;
 }
 
 .library-button.MuiIconButton-root:hover {
-  background: var(--ink-accent-soft);
+  background: var(--ink-favourite-soft);
 }
 
 .library-button svg {
@@ -565,9 +583,9 @@ img {
 
 .book-card__title {
   display: -webkit-box;
+  margin: 0;
   overflow: hidden;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.25;
@@ -576,7 +594,7 @@ img {
   -webkit-line-clamp: 2;
 }
 
-.book-card__title:hover {
+.book-card:hover .book-card__title {
   color: var(--ink-accent-dark);
 }
 
@@ -626,7 +644,6 @@ img {
 .reviews-section h2 {
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
 }
 
 .catalog-header h1 {
@@ -737,7 +754,6 @@ img {
 
 .catalog-empty h2 {
   margin: 0;
-  font-family: Fraunces, Georgia, serif;
 }
 
 .catalog-empty p {
@@ -806,6 +822,7 @@ img {
 
 .details-heart {
   width: 19px;
+  color: var(--ink-favourite);
 }
 
 .genre-chips {
@@ -844,7 +861,7 @@ img {
 }
 
 .book-rating strong {
-  color: var(--ink-accent-dark);
+  color: var(--ink-rating);
 }
 
 .book-long-description {
@@ -901,7 +918,6 @@ img {
 
 .rating-summary__score strong {
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: 2.7rem;
   line-height: 1;
 }
@@ -941,7 +957,7 @@ img {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--ink-accent);
+  background: var(--ink-rating);
 }
 
 .review-form {
@@ -1077,7 +1093,6 @@ img {
 
 .review-dialog__title h2 {
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: 1.55rem;
 }
 
@@ -1132,7 +1147,6 @@ img {
 .auth-card h1 {
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: clamp(2rem, 6vw, 3rem);
 }
 
@@ -1185,7 +1199,6 @@ img {
 .library-empty-state h2 {
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: clamp(1.5rem, 3vw, 2.2rem);
 }
 
@@ -1236,7 +1249,6 @@ img {
   flex-direction: column;
   margin: 0;
   color: var(--ink-primary-deep);
-  font-family: Fraunces, Georgia, serif;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 700;
   line-height: 1.05;
@@ -1270,6 +1282,14 @@ img {
   width: min(100%, 620px);
   height: auto;
   object-fit: contain;
+  transform-origin: center bottom;
+  animation: cat-breathe 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes cat-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.008); }
 }
 
 @media (max-width: 899px) {
@@ -1474,5 +1494,10 @@ img {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .hero-visual img,
+  .not-found-visual img {
+    animation: none;
   }
 }

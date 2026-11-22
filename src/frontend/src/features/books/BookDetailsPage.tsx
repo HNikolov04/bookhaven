@@ -9,6 +9,7 @@ import {
   IconButton,
   Rating,
   Skeleton,
+  SvgIcon,
 } from '@mui/material'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
@@ -37,39 +38,39 @@ const genreLabels: Record<Genre, string> = {
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
-    <svg aria-hidden="true" className="details-heart" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" className="details-heart" viewBox="0 0 24 24">
       <path
         d="M20.8 4.7a5.4 5.4 0 0 0-7.7 0L12 5.8l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.4 5.4 0 0 0 0-7.7Z"
         fill={filled ? 'currentColor' : 'none'}
         stroke="currentColor"
         strokeWidth="1.8"
       />
-    </svg>
+    </SvgIcon>
   )
 }
 
 function PersonIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
-    </svg>
+    </SvgIcon>
   )
 }
 
 function PencilIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <path d="m4 20 4.2-1 10.9-10.9-3.2-3.2L5 15.8 4 20ZM14.7 6.1l3.2 3.2" />
-    </svg>
+    </SvgIcon>
   )
 }
 
 function CloseIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <path d="m6 6 12 12M18 6 6 18" />
-    </svg>
+    </SvgIcon>
   )
 }
 

@@ -8,6 +8,7 @@ import {
   ListItemButton,
   Menu,
   MenuItem,
+  SvgIcon,
   Toolbar,
 } from '@mui/material'
 import { useState, type MouseEvent } from 'react'
@@ -33,26 +34,26 @@ function BookHavenMark() {
 
 function MenuIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
+    </SvgIcon>
   )
 }
 
 function PersonIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
-    </svg>
+    </SvgIcon>
   )
 }
 
 function LogoutIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
       <path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9" />
-    </svg>
+    </SvgIcon>
   )
 }
 

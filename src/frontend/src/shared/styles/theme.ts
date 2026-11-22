@@ -13,14 +13,14 @@ export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#454545',
+      main: '#202020',
     },
     secondary: {
-      main: '#4b4b4b',
+      main: '#202020',
       contrastText: '#ffffff',
     },
     error: {
-      main: '#525252',
+      main: '#dc2626',
     },
     background: {
       default: '#f5f5f5',
@@ -30,13 +30,6 @@ export const theme = createTheme({
       primary: '#252525',
       secondary: '#696969',
     },
-  },
-  typography: {
-    fontFamily: 'Inter, system-ui, sans-serif',
-    h1: { fontFamily: 'Fraunces, Georgia, serif', fontWeight: 700 },
-    h2: { fontFamily: 'Fraunces, Georgia, serif', fontWeight: 700 },
-    h3: { fontFamily: 'Fraunces, Georgia, serif', fontWeight: 600 },
-    button: { fontWeight: 700 },
   },
   shape: {
     borderRadius: 5,
@@ -52,6 +45,35 @@ export const theme = createTheme({
           minHeight: 48,
           paddingInline: 24,
           textTransform: 'none',
+          '&.MuiButton-contained': {
+            backgroundColor: '#202020',
+            color: '#ffffff',
+          },
+          '&.MuiButton-contained:hover': {
+            backgroundColor: '#000000',
+          },
+          '&.MuiButton-outlined': {
+            borderColor: '#202020',
+            color: '#202020',
+          },
+          '&.MuiButton-outlined:hover': {
+            borderColor: '#000000',
+            backgroundColor: '#f3f3f3',
+          },
+          '&.MuiButton-text': {
+            color: '#202020',
+          },
+          '&.MuiButton-text:hover': {
+            backgroundColor: '#f3f3f3',
+          },
+          '&.MuiButton-contained.Mui-disabled': {
+            backgroundColor: '#e5e5e5',
+            color: '#8a8a8a',
+          },
+          '&.MuiButton-outlined.Mui-disabled': {
+            borderColor: '#d4d4d4',
+            color: '#8a8a8a',
+          },
         },
       },
     },
@@ -65,7 +87,7 @@ export const theme = createTheme({
     MuiRating: {
       styleOverrides: {
         iconFilled: {
-          color: '#4b4b4b',
+          color: '#f59e0b',
         },
         iconEmpty: {
           color: '#cfcfcf',

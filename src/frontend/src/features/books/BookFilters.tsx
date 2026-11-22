@@ -5,6 +5,7 @@ import {
   InputAdornment,
   MenuItem,
   Select,
+  SvgIcon,
   TextField,
 } from '@mui/material'
 import type { BookSort, Genre } from './types'
@@ -33,10 +34,10 @@ const genreOptions: { value: Genre; label: string }[] = [
 
 function SearchIcon() {
   return (
-    <svg aria-hidden="true" className="search-field__icon" viewBox="0 0 24 24">
+    <SvgIcon aria-hidden="true" className="search-field__icon" viewBox="0 0 24 24">
       <circle cx="11" cy="11" r="6" />
       <path d="m16 16 4 4" />
-    </svg>
+    </SvgIcon>
   )
 }
 
