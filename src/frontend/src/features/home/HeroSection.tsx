@@ -1,13 +1,6 @@
 import { Button } from '@mui/material'
 import { Link } from 'react-router'
-
-function ArrowIcon() {
-  return (
-    <svg aria-hidden="true" className="button-icon" viewBox="0 0 24 24">
-      <path d="M5 12h14M14 7l5 5-5 5" />
-    </svg>
-  )
-}
+import homeLibraryIllustration from '../../assets/illustrations/home-library.png'
 
 export function HeroSection() {
   return (
@@ -23,7 +16,6 @@ export function HeroSection() {
           <div className="hero-actions">
             <Button
               component={Link}
-              endIcon={<ArrowIcon />}
               to="/books"
               variant="contained"
               color="secondary"
@@ -36,25 +28,14 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div
-          aria-label="A warm cup beside a stack of books and leafy branches"
-          className="hero-illustration"
-          role="img"
-        >
-          <span className="hero-spark hero-spark--one">&#10022;</span>
-          <span className="hero-spark hero-spark--two">&#10022;</span>
-          <div className="hero-steam"><i /><i /></div>
-          <div className="hero-cup"><span /></div>
-          <div className="hero-plant">
-            {Array.from({ length: 7 }, (_, index) => <i key={index} />)}
-          </div>
-          <div className="hero-books">
-            <span className="hero-book hero-book--one" />
-            <span className="hero-book hero-book--two" />
-            <span className="hero-book hero-book--three" />
-            <span className="hero-book hero-book--four" />
-          </div>
-          <div className="hero-shadow" />
+        <div className="hero-visual">
+          <img
+            alt="A cup and leafy branch resting on a stack of books"
+            fetchPriority="high"
+            height="1024"
+            src={homeLibraryIllustration}
+            width="1536"
+          />
         </div>
       </div>
     </section>

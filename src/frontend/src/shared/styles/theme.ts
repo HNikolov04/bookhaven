@@ -16,11 +16,14 @@ export const theme = createTheme({
       main: '#454545',
     },
     secondary: {
-      main: '#ed6b3a',
+      main: '#4b4b4b',
       contrastText: '#ffffff',
     },
+    error: {
+      main: '#525252',
+    },
     background: {
-      default: '#ffddc9',
+      default: '#f5f5f5',
       paper: '#ffffff',
     },
     text: {
@@ -56,6 +59,16 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           fontWeight: 700,
+        },
+      },
+    },
+    MuiRating: {
+      styleOverrides: {
+        iconFilled: {
+          color: '#4b4b4b',
+        },
+        iconEmpty: {
+          color: '#cfcfcf',
         },
       },
     },

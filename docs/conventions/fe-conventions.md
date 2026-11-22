@@ -38,11 +38,15 @@
 - One clear `h1` per page and labelled controls.
 - Use MUI for controls/feedback and CSS/Tailwind for layout.
 - Every CSS color custom property begins with `--ink-`.
-- Keep orange, gray, white, a solid pale-orange page background, and restrained
-  5 px corners. Do not use gradients.
+- Keep the interface monochrome: white and neutral grays only, with restrained
+  5 px corners. Do not use gradients or decorative accent colors.
 - Center desktop navigation within the full-width header independently of the
   brand and profile controls.
 - Keep filters in a white panel aligned with the catalogue card results.
+- Prefer responsive image assets for editorial illustrations; do not construct
+  detailed artwork from nested HTML or inline SVG shapes.
+- Let filter panels size to their content instead of stretching to match result
+  columns.
 
 ## Verification
 

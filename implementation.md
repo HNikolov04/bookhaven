@@ -1,6 +1,6 @@
 # BookHaven Implementation
 
-- **Last updated:** 2026-11-20
+- **Last updated:** 2026-11-23
 - **Current phase:** Authenticated catalogue foundation
 
 ## Completed
@@ -37,8 +37,8 @@
 - [x] Simplified all card borders to standard solid borders.
 - [x] Renamed the application service and interface to `BookService` and
   `IBookService`.
-- [x] Replaced cool-blue and gradient backgrounds with a brighter solid
-  pale-orange page background and white surfaces.
+- [x] Consolidated the interface into a minimal white-and-gray palette with no
+  orange accents or gradients.
 - [x] Added pointer feedback to interactive controls and underline-only header
   navigation states.
 - [x] Reworked the profile avatar and dropdown with a neutral person icon.
@@ -47,6 +47,12 @@
 - [x] Aligned catalogue filters in a white panel beside the complete card grid.
 - [x] Reworked book reviews into a server-backed summary, rating breakdown,
   review list, and centered rating/text modal without a display-name field.
+- [x] Replaced constructed home and 404 artwork with responsive grayscale image
+  assets and removed the obsolete illustration markup/styles.
+- [x] Removed the catalogue result-count row and made the filter panel size to
+  its own content.
+- [x] Reduced desktop navigation sizing, enlarged the profile control, and
+  removed extra profile-menu list spacing.
 
 ## Current schema
 

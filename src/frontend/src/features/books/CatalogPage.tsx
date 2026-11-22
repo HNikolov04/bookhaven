@@ -70,13 +70,6 @@ export function CatalogPage() {
         <BookFilters onChange={updateFilters} value={filters} />
 
         <div className="catalog-results">
-          <div className="catalog-results__toolbar">
-            <strong>
-              {books.data?.totalCount ?? 0}{' '}
-              {(books.data?.totalCount ?? 0) === 1 ? 'book' : 'books'} found
-            </strong>
-          </div>
-
           {books.isPending && <LoadingState count={8} />}
           {books.isError && (
             <ErrorState
