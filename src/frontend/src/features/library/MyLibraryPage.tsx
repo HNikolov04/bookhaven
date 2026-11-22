@@ -12,7 +12,6 @@ export function MyLibraryPage() {
   return (
     <section className="library-page page-container">
       <header className="library-page__header">
-        <span className="section-kicker">Your saved books</span>
         <h1 className="section-heading">My Library</h1>
         <p className="muted-copy">
           Keep the books you want to return to in one place.

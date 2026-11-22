@@ -7,5 +7,5 @@ builder.Logging.AddConsole();
 builder.Services.AddBookHaven(builder.Configuration);
 
 WebApplication app = builder.Build();
-app.UseBookHaven();
+await app.UseBookHavenAsync();
 app.Run();

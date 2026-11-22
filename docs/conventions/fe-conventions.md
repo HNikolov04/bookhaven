@@ -17,8 +17,9 @@
 - Auth body is centered and shows `Powered by BookHaven` at the page bottom.
 - `ProtectedRoute` guards the entire application layout.
 - Store JWT and email-only user under `bookhaven.auth.v1`.
-- The header shows a small profile avatar at the top right.
-- The profile dropdown displays email and a Logout action.
+- The header shows a neutral default-person avatar at the top right.
+- The clean profile dropdown displays email and a spaced Logout action.
+- Desktop and mobile navigation use underline-only hover and active states.
 - Never store passwords.
 
 ## Books and favourites
@@ -27,6 +28,9 @@
 - Adding a favourite uses `POST /api/books/{id}/favourites`.
 - My Library queries `GET /api/books?favouritesOnly=true`.
 - Favourite and book mutations invalidate `['books']` query keys.
+- The catalogue uses one responsive card grid; do not add a list-view toggle.
+- Reviews are server-backed and displayed below the full book summary.
+- Review forms contain only rating and text; identity comes from the JWT user.
 
 ## TypeScript and UI
 
@@ -34,7 +38,11 @@
 - One clear `h1` per page and labelled controls.
 - Use MUI for controls/feedback and CSS/Tailwind for layout.
 - Every CSS color custom property begins with `--ink-`.
-- Keep orange, gray, white, the light-blue gradient, and restrained 5 px corners.
+- Keep orange, gray, white, a solid pale-orange page background, and restrained
+  5 px corners. Do not use gradients.
+- Center desktop navigation within the full-width header independently of the
+  brand and profile controls.
+- Keep filters in a white panel aligned with the catalogue card results.
 
 ## Verification
 

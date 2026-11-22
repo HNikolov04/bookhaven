@@ -28,7 +28,9 @@ function AuthPage({ mode }: { mode: AuthMode }) {
   const registerMutation = useRegisterMutation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const mutation = isRegister ? registerMutation : loginMutation
+  const passwordsMatch = !isRegister || password === confirmPassword
 
   if (auth.isAuthenticated) {
     return <Navigate replace to="/" />
@@ -43,7 +45,11 @@ function AuthPage({ mode }: { mode: AuthMode }) {
     }
 
     if (isRegister) {
-      registerMutation.mutate({ email, password }, { onSuccess })
+      if (!passwordsMatch) return
+      registerMutation.mutate(
+        { email, password, confirmPassword },
+        { onSuccess },
+      )
       return
     }
 
@@ -53,7 +59,6 @@ function AuthPage({ mode }: { mode: AuthMode }) {
   return (
     <main className="auth-page page-container">
       <Paper className="auth-card" elevation={0} component="section">
-        <span className="section-kicker">Welcome to BookHaven</span>
         <h1>{isRegister ? 'Create an account' : 'Sign in'}</h1>
         <p>
           {isRegister
@@ -84,7 +89,28 @@ function AuthPage({ mode }: { mode: AuthMode }) {
             type="password"
             value={password}
           />
-          <Button disabled={mutation.isPending} type="submit" variant="contained">
+          {isRegister && (
+            <TextField
+              autoComplete="new-password"
+              error={Boolean(confirmPassword) && !passwordsMatch}
+              helperText={
+                Boolean(confirmPassword) && !passwordsMatch
+                  ? 'Passwords do not match.'
+                  : 'Enter the same password again.'
+              }
+              label="Confirm password"
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              required
+              slotProps={{ htmlInput: { minLength: 6 } }}
+              type="password"
+              value={confirmPassword}
+            />
+          )}
+          <Button
+            disabled={mutation.isPending || (isRegister && !passwordsMatch)}
+            type="submit"
+            variant="contained"
+          >
             {mutation.isPending
               ? 'Please wait…'
               : isRegister
@@ -99,8 +125,8 @@ function AuthPage({ mode }: { mode: AuthMode }) {
             {isRegister ? 'Sign in' : 'Create an account'}
           </Link>
         </p>
+        <p className="auth-powered">Powered by BookHaven</p>
       </Paper>
-      <p className="auth-powered">Powered by BookHaven</p>
     </main>
   )
 }

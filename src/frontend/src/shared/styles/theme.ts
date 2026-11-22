@@ -20,7 +20,7 @@ export const theme = createTheme({
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f4f4f4',
+      default: '#ffddc9',
       paper: '#ffffff',
     },
     text: {
@@ -46,8 +46,8 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 5,
-          minHeight: 44,
-          paddingInline: 20,
+          minHeight: 48,
+          paddingInline: 24,
           textTransform: 'none',
         },
       },

@@ -2,7 +2,7 @@ using BookHaven.Application.Dtos;
 
 namespace BookHaven.Application.Interfaces;
 
-public interface IBookHavenService
+public interface IBookService
 {
     Task<PagedDto<BookDto>> GetBooksAsync(
         Guid userId,
@@ -15,6 +15,11 @@ public interface IBookHavenService
         CancellationToken cancellationToken);
 
     Task<bool> AddBookToFavouritesAsync(
+        Guid bookId,
+        Guid userId,
+        CancellationToken cancellationToken);
+
+    Task<bool> RemoveBookFromFavouritesAsync(
         Guid bookId,
         Guid userId,
         CancellationToken cancellationToken);

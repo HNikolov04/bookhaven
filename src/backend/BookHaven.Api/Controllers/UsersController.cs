@@ -11,9 +11,9 @@ namespace BookHaven.Api.Controllers;
 [Route("api/users")]
 public sealed class UsersController : BaseController
 {
-    private readonly IBookHavenService service;
+    private readonly IBookService service;
 
-    public UsersController(IBookHavenService service)
+    public UsersController(IBookService service)
     {
         this.service = service;
     }

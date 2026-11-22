@@ -51,8 +51,8 @@ menu. Favourites are server state queried with React Query.
 
 ## Consequences
 
-- Catalogue content must be seeded/imported through persistence because the API
-  has no book-write endpoints.
+- Catalogue content is seeded through persistence because the API has no
+  book-write endpoints. A later import can replace the deterministic seed.
 - Email is the only displayed user identity.
 - Multiple genres remain strongly typed without a Genre lookup table.
 - Persisted rating summaries require recalculation after review writes.

@@ -11,7 +11,7 @@
 | Tests | Small deterministic unit tests |
 
 - There is no Infrastructure project.
-- `BookHavenService` is the single application service.
+- `BookService` is the single application service.
 - `BooksController` owns authenticated book/favourite/review endpoints.
 - `UsersController` owns register/login.
 - `BaseController` exposes shared authenticated-user helpers.
@@ -53,7 +53,7 @@ ApiDto <-> Application DTO <-> Repository DTO <-> Entity
   book create/update/delete.
 - `UserRepository` supports email lookup and registration persistence.
 - Read queries use `AsNoTracking` and `AsSplitQuery` when loading collections.
-- `BookHavenService` owns paging normalization, review validation, email
+- `BookService` owns paging normalization, review validation, email
   normalization, password hashing, login, and orchestration.
 
 ## EF Core

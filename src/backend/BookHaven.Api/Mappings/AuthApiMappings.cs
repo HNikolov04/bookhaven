@@ -7,7 +7,7 @@ internal static class AuthApiMappings
 {
     internal static RegisterDto ToApplicationDto(this RegisterApiDto dto)
     {
-        return new RegisterDto(dto.Email, dto.Password);
+        return new RegisterDto(dto.Email, dto.Password, dto.ConfirmPassword);
     }
 
     internal static LoginDto ToApplicationDto(this LoginApiDto dto)

@@ -26,7 +26,7 @@ public static class IServiceCollectionExtensions
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ITokenService, JwtTokenService>();
-        services.AddScoped<IBookHavenService, BookHavenService>();
+        services.AddScoped<IBookService, BookService>();
 
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

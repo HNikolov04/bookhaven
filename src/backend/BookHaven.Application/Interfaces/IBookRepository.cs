@@ -19,6 +19,11 @@ public interface IBookRepository
         Guid userId,
         CancellationToken cancellationToken);
 
+    Task<bool> RemoveBookFromFavouritesAsync(
+        Guid bookId,
+        Guid userId,
+        CancellationToken cancellationToken);
+
     Task<ReviewRepositoryDto?> AddReviewAsync(
         Guid bookId,
         Guid userId,

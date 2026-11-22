@@ -6,17 +6,17 @@ using BookHaven.Application.Services;
 
 namespace BookHaven.Tests;
 
-public sealed class BookHavenServiceTests
+public sealed class BookServiceTests
 {
     [Fact]
     public async Task RegisterAndLogin_ValidCredentials_NormalizesEmailAndReturnsToken()
     {
         FakeBookRepository books = new();
         FakeUserRepository users = new();
-        BookHavenService service = new(books, users, new FakeTokenService());
+        BookService service = new(books, users, new FakeTokenService());
 
         AuthDto registration = await service.RegisterAsync(
-            new RegisterDto("  Reader@BookHaven.Test ", "secret12"),
+            new RegisterDto("  Reader@BookHaven.Test ", "secret12", "secret12"),
             CancellationToken.None);
         AuthDto login = await service.LoginAsync(
             new LoginDto("reader@bookhaven.test", "secret12"),
@@ -36,21 +36,37 @@ public sealed class BookHavenServiceTests
         {
             User = new UserRepositoryDto(Guid.NewGuid(), "reader@bookhaven.test", "hash"),
         };
-        BookHavenService service = new(
+        BookService service = new(
             new FakeBookRepository(),
             users,
             new FakeTokenService());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.RegisterAsync(
-            new RegisterDto("reader@bookhaven.test", "secret12"),
+            new RegisterDto("reader@bookhaven.test", "secret12", "secret12"),
             CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Register_MismatchedPasswords_ThrowsValidationException()
+    {
+        BookService service = new(
+            new FakeBookRepository(),
+            new FakeUserRepository(),
+            new FakeTokenService());
+
+        ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(() =>
+            service.RegisterAsync(
+                new RegisterDto("reader@bookhaven.test", "secret12", "different12"),
+                CancellationToken.None));
+
+        Assert.Equal("Passwords do not match.", exception.Message);
     }
 
     [Fact]
     public async Task GetBooks_InvalidPaging_NormalizesQuery()
     {
         FakeBookRepository books = new();
-        BookHavenService service = new(
+        BookService service = new(
             books,
             new FakeUserRepository(),
             new FakeTokenService());
@@ -77,7 +93,7 @@ public sealed class BookHavenServiceTests
     public async Task AddBookToFavourites_ExistingBook_ForwardsUserAndBookIds()
     {
         FakeBookRepository books = new();
-        BookHavenService service = new(
+        BookService service = new(
             books,
             new FakeUserRepository(),
             new FakeTokenService());
@@ -94,12 +110,33 @@ public sealed class BookHavenServiceTests
         Assert.Equal(userId, books.FavouriteUserId);
     }
 
+    [Fact]
+    public async Task RemoveBookFromFavourites_ExistingFavourite_ForwardsUserAndBookIds()
+    {
+        FakeBookRepository books = new();
+        BookService service = new(
+            books,
+            new FakeUserRepository(),
+            new FakeTokenService());
+        Guid bookId = Guid.NewGuid();
+        Guid userId = Guid.NewGuid();
+
+        bool result = await service.RemoveBookFromFavouritesAsync(
+            bookId,
+            userId,
+            CancellationToken.None);
+
+        Assert.True(result);
+        Assert.Equal(bookId, books.RemovedFavouriteBookId);
+        Assert.Equal(userId, books.RemovedFavouriteUserId);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(6)]
     public async Task AddReview_InvalidStars_ThrowsValidationException(byte stars)
     {
-        BookHavenService service = new(
+        BookService service = new(
             new FakeBookRepository(),
             new FakeUserRepository(),
             new FakeTokenService());
@@ -152,6 +189,10 @@ public sealed class BookHavenServiceTests
 
         public Guid? FavouriteUserId { get; private set; }
 
+        public Guid? RemovedFavouriteBookId { get; private set; }
+
+        public Guid? RemovedFavouriteUserId { get; private set; }
+
         public Task<PagedRepositoryDto<BookRepositoryDto>> GetBooksAsync(
             Guid userId,
             BookQueryRepositoryDto query,
@@ -180,6 +221,16 @@ public sealed class BookHavenServiceTests
         {
             FavouriteBookId = bookId;
             FavouriteUserId = userId;
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RemoveBookFromFavouritesAsync(
+            Guid bookId,
+            Guid userId,
+            CancellationToken cancellationToken)
+        {
+            RemovedFavouriteBookId = bookId;
+            RemovedFavouriteUserId = userId;
             return Task.FromResult(true);
         }
 

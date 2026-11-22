@@ -13,6 +13,9 @@ book.
 - JWT bearer authentication with PBKDF2 password hashes
 - xUnit unit tests
 
+Registration requires the password twice. Matching is validated by both the
+frontend and API before a user is created.
+
 ## Structure
 
 ```text
@@ -46,7 +49,7 @@ Api -> Persistence -> Application -> Domain
 
 There is no Infrastructure project, AutoMapper, MediatR, ASP.NET Identity, or
 generic repository. DTOs and enums each have their own files. Mapping is manual
-at every boundary.
+at every boundary. `BookService` is the single application service.
 
 ## Domain model
 
@@ -67,6 +70,7 @@ Book endpoints are protected by JWT.
 | `GET` | `/api/books` | `GetAllBooks` |
 | `GET` | `/api/books/{id}` | `GetBook` |
 | `POST` | `/api/books/{id}/favourites` | Add favourite |
+| `DELETE` | `/api/books/{id}/favourites` | Remove favourite |
 | `POST` | `/api/books/{id}/reviews` | Add review |
 | `PUT` | `/api/books/reviews/{reviewId}` | Edit own review |
 | `DELETE` | `/api/books/reviews/{reviewId}` | Delete own review |
@@ -74,6 +78,11 @@ Book endpoints are protected by JWT.
 | `POST` | `/api/users/login` | Login |
 
 There are no add, update, or delete book endpoints.
+
+The persistence layer seeds twelve catalogue books with Open Library cover URLs
+when a new database is created. The catalogue UI supports title/author search,
+genre filtering, sorting, a responsive card grid, and pagination. Book details include
+ratings, metadata, favourites, and user-owned review management.
 
 The catalog accepts `search`, `genre`, `sort`, `isFeatured`, `favouritesOnly`,
 `page`, and `pageSize`.

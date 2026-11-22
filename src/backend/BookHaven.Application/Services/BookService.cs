@@ -7,13 +7,13 @@ using BookHaven.Application.Security;
 
 namespace BookHaven.Application.Services;
 
-public sealed class BookHavenService : IBookHavenService
+public sealed class BookService : IBookService
 {
     private readonly IBookRepository bookRepository;
     private readonly IUserRepository userRepository;
     private readonly ITokenService tokenService;
 
-    public BookHavenService(
+    public BookService(
         IBookRepository bookRepository,
         IUserRepository userRepository,
         ITokenService tokenService)
@@ -71,6 +71,17 @@ public sealed class BookHavenService : IBookHavenService
             cancellationToken);
     }
 
+    public Task<bool> RemoveBookFromFavouritesAsync(
+        Guid bookId,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return bookRepository.RemoveBookFromFavouritesAsync(
+            bookId,
+            userId,
+            cancellationToken);
+    }
+
     public async Task<ReviewDto?> AddReviewAsync(
         Guid bookId,
         Guid userId,
@@ -115,6 +126,13 @@ public sealed class BookHavenService : IBookHavenService
     {
         string email = NormalizeEmail(register.Email);
         ValidateCredentials(email, register.Password);
+        if (!string.Equals(
+            register.Password,
+            register.ConfirmPassword,
+            StringComparison.Ordinal))
+        {
+            throw new ArgumentException("Passwords do not match.");
+        }
 
         if (await userRepository.ExistsAsync(email, cancellationToken))
         {

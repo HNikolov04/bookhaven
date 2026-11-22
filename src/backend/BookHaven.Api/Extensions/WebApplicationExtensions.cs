@@ -1,10 +1,11 @@
 using BookHaven.Persistence;
+using BookHaven.Persistence.Seed;
 
 namespace BookHaven.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static WebApplication UseBookHaven(this WebApplication app)
+    public static async Task<WebApplication> UseBookHavenAsync(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -16,11 +17,12 @@ public static class WebApplicationExtensions
             app.UseHttpsRedirection();
         }
 
-        using (IServiceScope scope = app.Services.CreateScope())
+        await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
         {
             BookHavenDbContext dbContext =
                 scope.ServiceProvider.GetRequiredService<BookHavenDbContext>();
-            dbContext.Database.EnsureCreated();
+            await dbContext.Database.EnsureCreatedAsync();
+            await BookHavenSeeder.SeedAsync(dbContext);
         }
 
         app.UseCors("Frontend");

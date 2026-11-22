@@ -13,4 +13,6 @@ export type LoginRequest = {
   password: string
 }
 
-export type RegisterRequest = LoginRequest
+export type RegisterRequest = LoginRequest & {
+  confirmPassword: string
+}

@@ -1,6 +1,7 @@
 import {
   AppBar,
   Avatar,
+  Divider,
   Drawer,
   IconButton,
   List,
@@ -34,6 +35,23 @@ function MenuIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24">
       <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  )
+}
+
+function PersonIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 21a7.5 7.5 0 0 1 15 0" />
+    </svg>
+  )
+}
+
+function LogoutIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M10 5H5v14h5M14 8l4 4-4 4M18 12H9" />
     </svg>
   )
 }
@@ -91,18 +109,30 @@ export function Header() {
             onClick={handleProfileOpen}
             size="small"
           >
-            <Avatar className="profile-avatar">
-              {auth.user?.email.charAt(0).toUpperCase()}
-            </Avatar>
+            <Avatar className="profile-avatar"><PersonIcon /></Avatar>
           </IconButton>
           <Menu
             anchorEl={profileAnchor}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            className="profile-menu"
             id="profile-menu"
             onClose={() => setProfileAnchor(null)}
             open={Boolean(profileAnchor)}
+            slotProps={{ paper: { className: 'profile-menu__paper' } }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
-            <MenuItem disabled>{auth.user?.email}</MenuItem>
-            <MenuItem onClick={handleSignOut}>Logout</MenuItem>
+            <div className="profile-menu__identity">
+              <Avatar className="profile-menu__avatar"><PersonIcon /></Avatar>
+              <div>
+                <span>Signed in as</span>
+                <strong>{auth.user?.email}</strong>
+              </div>
+            </div>
+            <Divider />
+            <MenuItem className="profile-menu__logout" onClick={handleSignOut}>
+              <LogoutIcon />
+              <span>Log out</span>
+            </MenuItem>
           </Menu>
         </div>
       </Toolbar>

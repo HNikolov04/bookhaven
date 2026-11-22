@@ -1,3 +1,26 @@
+export const genres = [
+  'fiction',
+  'scienceFiction',
+  'fantasy',
+  'mystery',
+  'nonFiction',
+  'history',
+  'biography',
+  'romance',
+] as const
+
+export type Genre = (typeof genres)[number]
+
+export const bookSortOptions = [
+  'titleAscending',
+  'titleDescending',
+  'authorAscending',
+  'newest',
+  'oldest',
+] as const
+
+export type BookSort = (typeof bookSortOptions)[number]
+
 export type BookSummary = {
   id: string
   title: string
@@ -9,7 +32,7 @@ export type BookSummary = {
     description: string | null
   }
   pictureUrl: string
-  genres: string[]
+  genres: Genre[]
   pages: number
   publishYear: number
   averageStars: number
@@ -37,4 +60,17 @@ export type PagedApiDto<T> = {
   pageSize: number
   totalCount: number
   totalPages: number
+}
+
+export type BookQuery = {
+  search: string
+  genre?: Genre
+  sort: BookSort
+  page: number
+  pageSize: number
+}
+
+export type SaveReviewRequest = {
+  text: string
+  stars: number
 }

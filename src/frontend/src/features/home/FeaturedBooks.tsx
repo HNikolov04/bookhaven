@@ -14,12 +14,11 @@ export function FeaturedBooks() {
       <div className="page-container">
         <div className="section-title-row">
           <div>
-            <span className="section-kicker">Popular reads</span>
             <h2 className="section-heading" id="featured-heading">Featured books</h2>
             <p className="muted-copy">A fresh shelf of timeless fiction to begin with.</p>
           </div>
           <Button component={Link} to="/books" variant="text">
-            View all books <span aria-hidden="true">→</span>
+            View all books
           </Button>
         </div>
 

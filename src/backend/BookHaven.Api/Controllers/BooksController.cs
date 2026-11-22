@@ -11,9 +11,9 @@ namespace BookHaven.Api.Controllers;
 [Route("api/books")]
 public sealed class BooksController : BaseController
 {
-    private readonly IBookHavenService service;
+    private readonly IBookService service;
 
-    public BooksController(IBookHavenService service)
+    public BooksController(IBookService service)
     {
         this.service = service;
     }
@@ -57,6 +57,18 @@ public sealed class BooksController : BaseController
             GetUserId(),
             cancellationToken);
         return added ? NoContent() : NotFound();
+    }
+
+    [HttpDelete("{bookId:guid}/favourites")]
+    public async Task<IActionResult> RemoveBookFromFavourites(
+        Guid bookId,
+        CancellationToken cancellationToken)
+    {
+        bool removed = await service.RemoveBookFromFavouritesAsync(
+            bookId,
+            GetUserId(),
+            cancellationToken);
+        return removed ? NoContent() : NotFound();
     }
 
     [HttpPost("{bookId:guid}/reviews")]
