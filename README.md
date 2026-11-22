@@ -55,6 +55,8 @@ at every boundary. `BookService` is the single application service.
 
 - A `Book` contains title, short and long descriptions, picture URL, pages,
   publish year, average stars, rating vote count, and featured state.
+- Book identifiers are GUIDs. Rating summaries come only from BookHaven
+  reviews, so an unreviewed book starts at `0.0 / 5` and `0 ratings`.
 - A book has one `Author` and multiple enum genres through `BookGenre`.
 - An author has a name and description.
 - A review contains user, book, text, stars, and creation time.

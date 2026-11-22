@@ -35,8 +35,8 @@ const genreOptions: { value: Genre; label: string }[] = [
 function SearchIcon() {
   return (
     <SvgIcon aria-hidden="true" className="search-field__icon" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="6" />
-      <path d="m16 16 4 4" />
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m15.25 15.25 4.75 4.75" />
     </SvgIcon>
   )
 }

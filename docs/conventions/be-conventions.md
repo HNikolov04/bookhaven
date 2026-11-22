@@ -27,9 +27,13 @@
 
 ## Domain
 
+- Book, author, review, and user identifiers use `Guid` end to end.
 - One book has one author.
 - One book has multiple `Genre` enum values through `BookGenre`.
-- Book ratings persist `AverageStars` and `RatingVotes`.
+- Book ratings persist `AverageStars` and `RatingVotes`, calculated only from
+  BookHaven reviews. External catalogue ratings are never imported.
+- A book without BookHaven reviews has `AverageStars = 0` and
+  `RatingVotes = 0`.
 - Each review has `BookId`, `UserId`, text, stars, and `CreatedAtUtc`.
 - One user can review a given book once.
 - Users have email and password hash only; there is no username.
@@ -64,6 +68,8 @@ ApiDto <-> Application DTO <-> Repository DTO <-> Entity
   behavior explicitly.
 - Genre values are stored as strings in `BookGenres`.
 - Review changes recalculate book average stars and vote count.
+- Startup seeding normalizes existing rating summaries from stored reviews
+  without deleting user data.
 - The coursework setup uses `EnsureCreated`; use migrations when schema history
   becomes a deployment requirement.
 

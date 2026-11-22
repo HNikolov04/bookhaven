@@ -397,7 +397,7 @@ img {
 }
 
 .site-header__actions > .MuiIconButton-root:hover {
-  background: transparent;
+  background: var(--ink-accent-soft);
 }
 
 .hero-section {
@@ -663,9 +663,11 @@ img {
 
 .search-field__icon {
   width: 20px;
+  height: 20px;
   fill: none;
   stroke: var(--ink-primary-deep);
   stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-width: 1.8;
 }
 
@@ -773,6 +775,24 @@ img {
   margin-bottom: 1.5rem;
   color: var(--ink-text-muted);
   font-size: 0.8rem;
+}
+
+.breadcrumbs__back.MuiIconButton-root {
+  width: 34px;
+  height: 34px;
+  margin-right: 0.1rem;
+  color: var(--ink-primary-deep);
+}
+
+.breadcrumbs__back.MuiIconButton-root:hover {
+  background: var(--ink-accent-soft);
+}
+
+.breadcrumbs > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--ink-text-muted);
 }
 
 .breadcrumbs a {
@@ -977,8 +997,12 @@ img {
 
 .review-form label {
   color: var(--ink-primary-deep);
-  font-size: 0.86rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.review-form__rating.MuiRating-root {
+  font-size: 2.1rem;
 }
 
 .review-form__actions,
@@ -1094,6 +1118,7 @@ img {
 .review-dialog__title h2 {
   color: var(--ink-primary-deep);
   font-size: 1.55rem;
+  font-weight: 400;
 }
 
 .review-dialog__title p {
@@ -1120,6 +1145,12 @@ img {
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.library-pagination.MuiPagination-root {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
 .library-page {

@@ -50,7 +50,7 @@ export const theme = createTheme({
             color: '#ffffff',
           },
           '&.MuiButton-contained:hover': {
-            backgroundColor: '#000000',
+            backgroundColor: '#454545',
           },
           '&.MuiButton-outlined': {
             borderColor: '#202020',
@@ -58,13 +58,15 @@ export const theme = createTheme({
           },
           '&.MuiButton-outlined:hover': {
             borderColor: '#000000',
-            backgroundColor: '#f3f3f3',
+            backgroundColor: '#202020',
+            color: '#ffffff',
           },
           '&.MuiButton-text': {
             color: '#202020',
           },
           '&.MuiButton-text:hover': {
-            backgroundColor: '#f3f3f3',
+            backgroundColor: '#202020',
+            color: '#ffffff',
           },
           '&.MuiButton-contained.Mui-disabled': {
             backgroundColor: '#e5e5e5',

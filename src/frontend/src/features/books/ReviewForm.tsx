@@ -31,7 +31,9 @@ export function ReviewForm({
       <div>
         <label>Your rating</label>
         <Rating
+          className="review-form__rating"
           onChange={(_, value) => setStars(value ?? 0)}
+          size="large"
           value={stars}
         />
       </div>

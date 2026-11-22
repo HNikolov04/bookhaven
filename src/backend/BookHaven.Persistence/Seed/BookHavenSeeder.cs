@@ -12,13 +12,14 @@ public static class BookHavenSeeder
     {
         if (await dbContext.Books.AnyAsync(cancellationToken))
         {
+            await RecalculateRatingsAsync(dbContext, cancellationToken);
             return;
         }
 
         Book[] books =
         [
             CreateBook(
-                "11111111-1111-1111-1111-111111111111",
+                Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 "Dune",
                 "Frank Herbert",
                 "A young heir confronts destiny on the desert planet Arrakis.",
@@ -26,13 +27,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780441172719-L.jpg",
                 412,
                 1965,
-                4.7m,
-                12_430,
                 true,
                 Genre.ScienceFiction,
                 Genre.Fiction),
             CreateBook(
-                "22222222-2222-2222-2222-222222222222",
+                Guid.Parse("22222222-2222-2222-2222-222222222222"),
                 "1984",
                 "George Orwell",
                 "A chilling portrait of surveillance, truth, and resistance.",
@@ -40,13 +39,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg",
                 328,
                 1949,
-                4.6m,
-                18_205,
                 true,
                 Genre.Fiction,
                 Genre.ScienceFiction),
             CreateBook(
-                "33333333-3333-3333-3333-333333333333",
+                Guid.Parse("33333333-3333-3333-3333-333333333333"),
                 "The Hobbit",
                 "J.R.R. Tolkien",
                 "An unexpected journey beyond the comforts of home.",
@@ -54,13 +51,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780547928227-L.jpg",
                 310,
                 1937,
-                4.8m,
-                21_780,
                 true,
                 Genre.Fantasy,
                 Genre.Fiction),
             CreateBook(
-                "44444444-4444-4444-4444-444444444444",
+                Guid.Parse("44444444-4444-4444-4444-444444444444"),
                 "Sapiens",
                 "Yuval Noah Harari",
                 "A concise exploration of how humankind came to shape the world.",
@@ -68,13 +63,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg",
                 464,
                 2011,
-                4.5m,
-                9_620,
                 true,
                 Genre.NonFiction,
                 Genre.History),
             CreateBook(
-                "55555555-5555-5555-5555-555555555555",
+                Guid.Parse("55555555-5555-5555-5555-555555555555"),
                 "Atomic Habits",
                 "James Clear",
                 "Practical ideas for building good habits and breaking bad ones.",
@@ -82,12 +75,10 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
                 320,
                 2018,
-                4.7m,
-                16_340,
                 false,
                 Genre.NonFiction),
             CreateBook(
-                "66666666-6666-6666-6666-666666666666",
+                Guid.Parse("66666666-6666-6666-6666-666666666666"),
                 "Project Hail Mary",
                 "Andy Weir",
                 "One astronaut wakes up to an impossible mission among the stars.",
@@ -95,13 +86,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780593135204-L.jpg",
                 496,
                 2021,
-                4.8m,
-                14_112,
                 false,
                 Genre.ScienceFiction,
                 Genre.Fiction),
             CreateBook(
-                "77777777-7777-7777-7777-777777777777",
+                Guid.Parse("77777777-7777-7777-7777-777777777777"),
                 "The Alchemist",
                 "Paulo Coelho",
                 "A shepherd follows a dream toward treasure and self-discovery.",
@@ -109,12 +98,10 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780061122415-L.jpg",
                 208,
                 1988,
-                4.3m,
-                10_784,
                 false,
                 Genre.Fiction),
             CreateBook(
-                "88888888-8888-8888-8888-888888888888",
+                Guid.Parse("88888888-8888-8888-8888-888888888888"),
                 "Circe",
                 "Madeline Miller",
                 "A mythic witch claims her power and tells her own story.",
@@ -122,13 +109,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780316556347-L.jpg",
                 400,
                 2018,
-                4.6m,
-                8_912,
                 false,
                 Genre.Fantasy,
                 Genre.Fiction),
             CreateBook(
-                "99999999-9999-9999-9999-999999999999",
+                Guid.Parse("99999999-9999-9999-9999-999999999999"),
                 "Educated",
                 "Tara Westover",
                 "A memoir about education, family, and finding an independent voice.",
@@ -136,13 +121,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg",
                 352,
                 2018,
-                4.7m,
-                13_105,
                 false,
                 Genre.NonFiction,
                 Genre.Biography),
             CreateBook(
-                "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                 "A Game of Thrones",
                 "George R. R. Martin",
                 "Noble families contend for power as an ancient threat returns.",
@@ -150,13 +133,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780553593716-L.jpg",
                 835,
                 1996,
-                4.7m,
-                17_806,
                 false,
                 Genre.Fantasy,
                 Genre.Fiction),
             CreateBook(
-                "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+                Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                 "Pride and Prejudice",
                 "Jane Austen",
                 "Elizabeth Bennet meets her match in the reserved Mr Darcy.",
@@ -164,13 +145,11 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9780141439518-L.jpg",
                 480,
                 1813,
-                4.6m,
-                19_440,
                 false,
                 Genre.Fiction,
                 Genre.Romance),
             CreateBook(
-                "cccccccc-cccc-cccc-cccc-cccccccccccc",
+                Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
                 "The Silent Patient",
                 "Alex Michaelides",
                 "A psychotherapist searches for the truth behind a woman's silence.",
@@ -178,8 +157,6 @@ public static class BookHavenSeeder
                 "https://covers.openlibrary.org/b/isbn/9781250301697-L.jpg",
                 336,
                 2019,
-                4.2m,
-                7_604,
                 false,
                 Genre.Mystery,
                 Genre.Fiction),
@@ -190,7 +167,7 @@ public static class BookHavenSeeder
     }
 
     private static Book CreateBook(
-        string id,
+        Guid id,
         string title,
         string authorName,
         string shortDescription,
@@ -198,29 +175,26 @@ public static class BookHavenSeeder
         string pictureUrl,
         int pages,
         int publishYear,
-        decimal averageStars,
-        int ratingVotes,
         bool isFeatured,
         params Genre[] genres)
     {
-        Guid bookId = Guid.Parse(id);
         Author author = new()
         {
-            Id = bookId,
+            Id = id,
             Name = authorName,
             Description = $"{authorName} is the author of {title}.",
         };
         Book book = new()
         {
-            Id = bookId,
+            Id = id,
             Title = title,
             ShortDescription = shortDescription,
             LongDescription = longDescription,
             PictureUrl = pictureUrl,
             Pages = pages,
             PublishYear = publishYear,
-            AverageStars = averageStars,
-            RatingVotes = ratingVotes,
+            AverageStars = 0,
+            RatingVotes = 0,
             IsFeatured = isFeatured,
             AuthorId = author.Id,
             Author = author,
@@ -228,11 +202,43 @@ public static class BookHavenSeeder
         book.BookGenres = genres
             .Select(genre => new BookGenre
             {
-                BookId = bookId,
+                BookId = id,
                 Genre = genre,
                 Book = book,
             })
             .ToArray();
         return book;
+    }
+
+    private static async Task RecalculateRatingsAsync(
+        BookHavenDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        Book[] books = await dbContext.Books
+            .Include(book => book.Reviews)
+            .ToArrayAsync(cancellationToken);
+        bool hasChanges = false;
+
+        foreach (Book book in books)
+        {
+            int ratingVotes = book.Reviews.Count;
+            decimal averageStars = ratingVotes == 0
+                ? 0
+                : Math.Round(book.Reviews.Average(review => (decimal)review.Stars), 2);
+
+            if (book.RatingVotes == ratingVotes && book.AverageStars == averageStars)
+            {
+                continue;
+            }
+
+            book.RatingVotes = ratingVotes;
+            book.AverageStars = averageStars;
+            hasChanges = true;
+        }
+
+        if (hasChanges)
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

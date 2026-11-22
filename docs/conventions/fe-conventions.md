@@ -26,11 +26,15 @@
 
 - Book cards use the API's picture URL, author, publish year, and favourite flag.
 - Adding a favourite uses `POST /api/books/{id}/favourites`.
-- My Library queries `GET /api/books?favouritesOnly=true`.
+- My Library queries `GET /api/books?favouritesOnly=true` with URL-backed
+  server pagination.
 - Favourite and book mutations invalidate `['books']` query keys.
 - The catalogue uses one responsive card grid; do not add a list-view toggle.
 - Reviews are server-backed and displayed below the full book summary.
 - Review forms contain only rating and text; identity comes from the JWT user.
+- Display `0.0 / 5` and `0 ratings` until a BookHaven user submits a review;
+  never substitute ratings from an external catalogue.
+- Treat API `Guid` identifiers as opaque strings in TypeScript and URLs.
 
 ## TypeScript and UI
 
@@ -54,6 +58,8 @@
 - Keep editorial-image motion subtle and disable it for reduced-motion users.
 - Make the entire book card the details link while keeping its favourite button
   as a separate action above the link layer.
+- Keep details breadcrumbs keyboard accessible and include a back-to-catalogue
+  control before the breadcrumb trail.
 
 ## Verification
 

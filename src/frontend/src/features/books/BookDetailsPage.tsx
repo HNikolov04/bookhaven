@@ -74,6 +74,36 @@ function CloseIcon() {
   )
 }
 
+function BackIcon() {
+  return (
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
+      <path
+        d="m15 18-6-6 6-6M9 12h10"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </SvgIcon>
+  )
+}
+
+function ChevronRightIcon() {
+  return (
+    <SvgIcon aria-hidden="true" viewBox="0 0 24 24">
+      <path
+        d="m9 6 6 6-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </SvgIcon>
+  )
+}
+
 function formatDate(value: string) {
   return new Intl.DateTimeFormat(undefined, {
     day: 'numeric',
@@ -161,9 +191,18 @@ export function BookDetailsPage() {
   return (
     <section className="book-details-page page-container">
       <nav aria-label="Breadcrumb" className="breadcrumbs">
+        <IconButton
+          aria-label="Back to catalog"
+          className="breadcrumbs__back"
+          component={Link}
+          size="small"
+          to="/books"
+        >
+          <BackIcon />
+        </IconButton>
         <Link to="/books">Catalog</Link>
-        <span aria-hidden="true">›</span>
-        <span>{book.title}</span>
+        <ChevronRightIcon />
+        <span>Book Details</span>
       </nav>
 
       <div className="book-details-hero">
@@ -188,9 +227,9 @@ export function BookDetailsPage() {
               startIcon={favourite.isPending
                 ? <CircularProgress color="inherit" size={17} />
                 : <HeartIcon filled={book.isFavourite} />}
-              variant={book.isFavourite ? 'contained' : 'outlined'}
+              variant="contained"
             >
-              {book.isFavourite ? 'In My Library' : 'Add to My Library'}
+              Add to My Library
             </Button>
           </div>
 
@@ -224,7 +263,7 @@ export function BookDetailsPage() {
             color="secondary"
             onClick={openReviewDialog}
             startIcon={<PencilIcon />}
-            variant="outlined"
+            variant="contained"
           >
             {ownReview ? 'Edit your review' : 'Write a review'}
           </Button>
@@ -300,6 +339,7 @@ export function BookDetailsPage() {
       </section>
 
       <Dialog
+        aria-labelledby="review-dialog-title"
         className="review-dialog"
         fullWidth
         maxWidth="sm"

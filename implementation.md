@@ -60,6 +60,16 @@
 - [x] Added subtle reduced-motion-safe animation to the home and 404 images.
 - [x] Made complete book cards open their details route while preserving the
   independent favourite action.
+- [x] Confirmed book IDs as `Guid` values throughout the backend and opaque
+  strings at the frontend boundary.
+- [x] Added a back-to-catalogue control before the book-details breadcrumbs and
+  replaced the catalogue search glyph with a clean MUI icon.
+- [x] Added URL-backed server pagination to My Library.
+- [x] Standardized black button hover states while keeping favourite selection
+  visible only through the red heart.
+- [x] Simplified review-modal typography and enlarged its rating control.
+- [x] Removed imported/seeded rating values; rating summaries now derive only
+  from BookHaven reviews and default to `0.0 / 5` with `0 ratings`.
 
 ## Current schema
 
