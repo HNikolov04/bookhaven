@@ -6,8 +6,8 @@ import {
   Select,
   TextField,
 } from '@mui/material'
-import { genreOptions, sortOptions } from './bookOptions'
-import type { BookSort, Genre } from './types'
+import { genreOptions, sortOptions } from '../constants/bookOptions'
+import type { BookSort, Genre } from '../types'
 
 export type BookFilterValues = {
   query: string

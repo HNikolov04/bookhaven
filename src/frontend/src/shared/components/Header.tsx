@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { useState, type MouseEvent } from 'react'
 import { NavLink } from 'react-router'
-import { useAuth } from '../../features/auth/useAuth'
+import { useAuth } from '../../features/auth/hooks/useAuth'
 
 const navigation = [
   { label: 'Home', to: '/' },

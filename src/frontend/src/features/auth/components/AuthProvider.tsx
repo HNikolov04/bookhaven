@@ -4,9 +4,9 @@ import {
   readStoredAuth,
   storeAuth,
   subscribeToAuth,
-} from './authStorage'
-import type { AuthResponse } from './types'
-import { AuthContext, type AuthContextValue } from './useAuth'
+} from '../storage/authStorage'
+import type { AuthResponse } from '../types'
+import { AuthContext, type AuthContextValue } from '../hooks/useAuth'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<AuthResponse | null>(readStoredAuth)

@@ -2,8 +2,17 @@
 
 ## Structure and HTTP
 
-- Keep feature code under `features/auth`, `features/books`, and
-  `features/library`.
+- Keep feature code under `features/auth`, `features/books`, `features/home`,
+  and `features/library`.
+- Inside each feature, group React UI under `components`, custom hooks under
+  `hooks`, and feature-owned types under `types`. Keep HTTP functions under
+  `api` when the feature owns API calls.
+- Keep static feature metadata under `constants` and browser-persistence
+  adapters under `storage`; neither belongs in a component or hook module.
+- Do not create placeholder files or empty folders. Add a feature subfolder
+  only when that feature has code for the corresponding responsibility.
+- Keep domain types with their owning feature even when another feature renders
+  them. Reserve `shared` for genuinely feature-neutral code.
 - Components never call Axios directly.
 - HTTP flow is component -> custom React Query hook -> API function -> shared
   Axios client.

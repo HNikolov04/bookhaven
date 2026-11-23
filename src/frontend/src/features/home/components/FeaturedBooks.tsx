@@ -1,10 +1,10 @@
 import { Button } from '@mui/material'
 import { Link } from 'react-router'
-import { useFeaturedBooksQuery } from '../books/hooks/useFeaturedBooksQuery'
-import { BookCard } from '../../shared/components/BookCard'
-import { BookGrid } from '../../shared/components/BookGrid'
-import { ErrorState } from '../../shared/components/ErrorState'
-import { LoadingState } from '../../shared/components/LoadingState'
+import { BookCard } from '../../books/components/BookCard'
+import { BookGrid } from '../../books/components/BookGrid'
+import { LoadingState } from '../../books/components/LoadingState'
+import { useFeaturedBooksQuery } from '../hooks/useFeaturedBooksQuery'
+import { ErrorState } from '../../../shared/components/ErrorState'
 
 export function FeaturedBooks() {
   const featuredBooks = useFeaturedBooksQuery()

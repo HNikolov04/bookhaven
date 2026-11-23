@@ -1,4 +1,4 @@
-import type { AuthResponse } from './types'
+import type { AuthResponse } from '../types'
 
 const AUTH_STORAGE_KEY = 'bookhaven.auth.v1'
 const AUTH_EVENT = 'bookhaven:auth-changed'

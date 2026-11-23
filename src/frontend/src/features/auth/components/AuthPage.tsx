@@ -2,8 +2,8 @@ import { Alert, Button, Paper, TextField } from '@mui/material'
 import axios from 'axios'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { useAuth } from './useAuth'
-import { useLoginMutation, useRegisterMutation } from './useAuthMutations'
+import { useAuth } from '../hooks/useAuth'
+import { useLoginMutation, useRegisterMutation } from '../hooks/useAuthMutations'
 
 type AuthMode = 'login' | 'register'
 

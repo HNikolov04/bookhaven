@@ -1,7 +1,7 @@
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router'
-import { AuthProvider } from '../features/auth/AuthProvider'
+import { AuthProvider } from '../features/auth/components/AuthProvider'
 import { theme } from '../shared/styles/theme'
 import { router } from './router'
 

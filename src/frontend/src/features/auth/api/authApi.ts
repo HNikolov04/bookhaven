@@ -1,9 +1,9 @@
-import { axiosClient } from '../../shared/api/axiosClient'
+import { axiosClient } from '../../../shared/api/axiosClient'
 import type {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
-} from './types'
+} from '../types'
 
 export async function login(request: LoginRequest): Promise<AuthResponse> {
   const response = await axiosClient.post<AuthResponse>('/users/login', request)

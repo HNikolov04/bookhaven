@@ -1,11 +1,11 @@
 import { Button, Pagination } from '@mui/material'
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { BookCard } from '../../shared/components/BookCard'
-import { BookGrid } from '../../shared/components/BookGrid'
-import { ErrorState } from '../../shared/components/ErrorState'
-import { LoadingState } from '../../shared/components/LoadingState'
-import { useFavouriteBooksQuery } from '../books/hooks/useFavouriteBooksQuery'
+import { BookCard } from '../../books/components/BookCard'
+import { BookGrid } from '../../books/components/BookGrid'
+import { LoadingState } from '../../books/components/LoadingState'
+import { ErrorState } from '../../../shared/components/ErrorState'
+import { useFavouriteBooksQuery } from '../hooks/useFavouriteBooksQuery'
 
 export function MyLibraryPage() {
   const [searchParams, setSearchParams] = useSearchParams()

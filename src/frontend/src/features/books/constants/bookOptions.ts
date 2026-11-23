@@ -1,4 +1,4 @@
-import { genres, type BookSort, type Genre } from './types'
+import { genres, type BookSort, type Genre } from '../types'
 
 export const genreLabels: Record<Genre, string> = {
   fiction: 'Fiction',

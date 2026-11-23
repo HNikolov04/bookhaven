@@ -1,8 +1,8 @@
 import { CircularProgress, IconButton, SvgIcon, Tooltip } from '@mui/material'
 import { Link } from 'react-router'
-import { useFavouriteMutation } from '../../features/books/hooks/useFavouriteMutation'
-import type { BookSummary } from '../../features/books/types'
-import { RequestErrorSnackbar } from './RequestErrorSnackbar'
+import { RequestErrorSnackbar } from '../../../shared/components/RequestErrorSnackbar'
+import { useFavouriteMutation } from '../hooks/useFavouriteMutation'
+import type { BookSummary } from '../types'
 
 type BookCardProps = {
   book: BookSummary

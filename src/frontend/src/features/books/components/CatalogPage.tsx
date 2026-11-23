@@ -1,18 +1,18 @@
 import { Pagination } from '@mui/material'
 import { useDeferredValue } from 'react'
 import { useSearchParams } from 'react-router'
-import { BookCard } from '../../shared/components/BookCard'
-import { BookGrid } from '../../shared/components/BookGrid'
-import { ErrorState } from '../../shared/components/ErrorState'
-import { LoadingState } from '../../shared/components/LoadingState'
+import { ErrorState } from '../../../shared/components/ErrorState'
+import { BookCard } from './BookCard'
 import { BookFilters, BookSearch, type BookFilterValues } from './BookFilters'
-import { useBooksQuery } from './hooks/useBooksQuery'
+import { BookGrid } from './BookGrid'
+import { LoadingState } from './LoadingState'
+import { useBooksQuery } from '../hooks/useBooksQuery'
 import {
   bookSortOptions,
   genres,
   type BookSort,
   type Genre,
-} from './types'
+} from '../types'
 
 function isGenre(value: string | null): value is Genre {
   return Boolean(value && genres.includes(value as Genre))

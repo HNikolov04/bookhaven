@@ -9,14 +9,14 @@ import {
   SvgIcon,
 } from '@mui/material'
 import { useState } from 'react'
-import { useAuth } from '../auth/useAuth'
+import { useAuth } from '../../auth/hooks/useAuth'
 import {
   useAddReviewMutation,
   useDeleteReviewMutation,
   useUpdateReviewMutation,
-} from './hooks/useReviewMutations'
+} from '../hooks/useReviewMutations'
 import { ReviewForm } from './ReviewForm'
-import type { BookSummary, SaveReviewRequest } from './types'
+import type { BookSummary, SaveReviewRequest } from '../types'
 
 function PersonIcon() {
   return (

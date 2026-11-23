@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { getFeaturedBooks } from '../api/booksApi'
-import { bookQueryKeys } from './bookQueryKeys'
+import { getFeaturedBooks } from '../../books/api/booksApi'
+import { bookQueryKeys } from '../../books/hooks/bookQueryKeys'
 
 export function useFeaturedBooksQuery() {
   return useQuery({

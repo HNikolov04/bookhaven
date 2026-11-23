@@ -1,6 +1,6 @@
 import { Alert, Button, Rating, TextField } from '@mui/material'
 import { useState, type FormEvent } from 'react'
-import type { SaveReviewRequest } from './types'
+import type { SaveReviewRequest } from '../types'
 
 type ReviewFormProps = {
   initialValue?: SaveReviewRequest

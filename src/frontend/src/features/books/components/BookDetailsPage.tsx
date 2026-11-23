@@ -7,12 +7,12 @@ import {
   SvgIcon,
 } from '@mui/material'
 import { Link, useParams } from 'react-router'
-import { ErrorState } from '../../shared/components/ErrorState'
-import { RequestErrorSnackbar } from '../../shared/components/RequestErrorSnackbar'
-import { genreLabels } from './bookOptions'
+import { ErrorState } from '../../../shared/components/ErrorState'
+import { RequestErrorSnackbar } from '../../../shared/components/RequestErrorSnackbar'
+import { genreLabels } from '../constants/bookOptions'
 import { BookReviews } from './BookReviews'
-import { useBookQuery } from './hooks/useBookQuery'
-import { useFavouriteMutation } from './hooks/useFavouriteMutation'
+import { useBookQuery } from '../hooks/useBookQuery'
+import { useFavouriteMutation } from '../hooks/useFavouriteMutation'
 
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
