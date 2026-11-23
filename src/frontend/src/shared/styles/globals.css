@@ -80,6 +80,25 @@ input:disabled {
   cursor: not-allowed;
 }
 
+.MuiIconButton-root {
+  transition: transform 150ms ease;
+}
+
+.MuiIconButton-root.MuiIconButton-root:hover {
+  background: transparent;
+  transform: translateY(-2px);
+}
+
+.MuiIconButton-root:active {
+  transform: translateY(0);
+}
+
+.button-secondary.MuiButton-root.MuiButton-text,
+.button-secondary.MuiButton-root.MuiButton-text:hover {
+  background: transparent;
+  color: var(--ink-primary-deep);
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -236,7 +255,7 @@ img {
   width: 38px;
   height: 38px;
   border: 1px solid var(--ink-border-soft);
-  background: var(--ink-surface);
+  background: var(--ink-background-warm);
   color: var(--ink-primary-deep);
 }
 
@@ -397,18 +416,27 @@ img {
 }
 
 .site-header__actions > .MuiIconButton-root:hover {
-  background: var(--ink-accent-soft);
+  background: transparent;
 }
 
 .hero-section {
-  position: relative;
-  overflow: hidden;
-  padding-block: clamp(3.5rem, 7vw, 6.2rem);
+  display: flex;
+  min-height: clamp(500px, 54vw, 690px);
+  background-color: #ead8c8;
+  background-image: url('/Cozy%20Coffee%20and%20Book%20Still%20Life-2.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.hero-section__inner {
+  display: flex;
+  align-items: center;
 }
 
 .hero-copy {
-  position: relative;
-  z-index: 1;
+  width: min(100%, 550px);
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
 }
 
 .hero-copy h1 {
@@ -437,35 +465,6 @@ img {
   flex-wrap: wrap;
   gap: 0.85rem;
   margin-top: 2rem;
-}
-
-.hero-actions .MuiButton-containedSecondary {
-  background: var(--ink-accent);
-}
-
-.hero-actions .MuiButton-containedSecondary:hover {
-  background: var(--ink-accent-dark);
-}
-
-.hero-visual {
-  display: grid;
-  width: min(100%, 600px);
-  margin-inline: auto;
-  place-items: center;
-}
-
-.hero-visual img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  transform-origin: center;
-  animation: hero-float 6s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes hero-float {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-8px) rotate(-0.6deg); }
 }
 
 .featured-section {
@@ -570,7 +569,7 @@ img {
 }
 
 .library-button.MuiIconButton-root:hover {
-  background: var(--ink-favourite-soft);
+  background: var(--ink-surface);
 }
 
 .library-button svg {
@@ -659,16 +658,6 @@ img {
 .catalog-search .MuiOutlinedInput-root {
   border-radius: var(--card-radius);
   background: var(--ink-surface);
-}
-
-.search-field__icon {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: var(--ink-primary-deep);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
 }
 
 .catalog-layout {
@@ -785,7 +774,7 @@ img {
 }
 
 .breadcrumbs__back.MuiIconButton-root:hover {
-  background: var(--ink-accent-soft);
+  background: transparent;
 }
 
 .breadcrumbs > svg {
@@ -841,8 +830,23 @@ img {
 }
 
 .details-heart {
-  width: 19px;
   color: var(--ink-favourite);
+}
+
+.details-favourite-button.MuiIconButton-root {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  color: var(--ink-favourite);
+}
+
+.details-favourite-button .details-heart {
+  width: 36px;
+  height: 36px;
+}
+
+.details-favourite-button.MuiIconButton-root:hover {
+  background: transparent;
 }
 
 .genre-chips {
@@ -1002,7 +1006,7 @@ img {
 }
 
 .review-form__rating.MuiRating-root {
-  font-size: 2.1rem;
+  font-size: 2.8rem;
 }
 
 .review-form__actions,
@@ -1267,12 +1271,24 @@ img {
 }
 
 .not-found-page {
+  display: flex;
+  min-height: calc(100vh - 114px);
+  background-color: #ead8c8;
+  background-image: url('/Cozy%20Cat%20Nap%20and%20Coffee%20Bookshelf.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.not-found-page__inner {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
   align-items: center;
-  gap: clamp(2rem, 6vw, 6rem);
-  min-height: calc(100vh - 114px);
   padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.not-found-page__content {
+  grid-column: 2;
 }
 
 .not-found-page__content h1 {
@@ -1301,26 +1317,6 @@ img {
 
 .not-found-page__content .MuiButton-root {
   min-width: 150px;
-}
-
-.not-found-visual {
-  display: grid;
-  width: 100%;
-  place-items: center;
-}
-
-.not-found-visual img {
-  width: min(100%, 620px);
-  height: auto;
-  object-fit: contain;
-  transform-origin: center bottom;
-  animation: cat-breathe 5s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes cat-breathe {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-4px) scale(1.008); }
 }
 
 @media (max-width: 899px) {
@@ -1377,7 +1373,13 @@ img {
   }
 
   .hero-section {
-    padding-top: 3.4rem;
+    min-height: 590px;
+    background-position: 62% center;
+  }
+
+  .hero-copy {
+    padding: 2rem 1.25rem;
+    background: rgba(255, 255, 255, 0.84);
   }
 
   .hero-copy h1 {
@@ -1391,11 +1393,8 @@ img {
   }
 
   .hero-actions .MuiButton-root {
-    width: 100%;
-  }
-
-  .hero-visual {
-    width: min(92vw, 520px);
+    align-self: flex-start;
+    width: auto;
   }
 
   .section-title-row {
@@ -1497,19 +1496,21 @@ img {
 
 @media (max-width: 749px) {
   .not-found-page {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    background-position: 28% center;
     text-align: center;
   }
 
-  .not-found-visual {
-    width: min(90vw, 520px);
+  .not-found-page__inner {
+    grid-template-columns: 1fr;
   }
 
   .not-found-page__content {
     display: flex;
+    grid-column: 1;
     flex-direction: column;
     align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.86);
   }
 }
 
@@ -1527,8 +1528,4 @@ img {
     animation-iteration-count: 1 !important;
   }
 
-  .hero-visual img,
-  .not-found-visual img {
-    animation: none;
-  }
 }

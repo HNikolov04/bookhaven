@@ -2,10 +2,8 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  InputAdornment,
   MenuItem,
   Select,
-  SvgIcon,
   TextField,
 } from '@mui/material'
 import type { BookSort, Genre } from './types'
@@ -32,15 +30,6 @@ const genreOptions: { value: Genre; label: string }[] = [
   { value: 'romance', label: 'Romance' },
 ]
 
-function SearchIcon() {
-  return (
-    <SvgIcon aria-hidden="true" className="search-field__icon" viewBox="0 0 24 24">
-      <circle cx="10.5" cy="10.5" r="6.5" />
-      <path d="m15.25 15.25 4.75 4.75" />
-    </SvgIcon>
-  )
-}
-
 export function BookSearch({ value, onChange }: BookFiltersProps) {
   return (
     <TextField
@@ -50,15 +39,6 @@ export function BookSearch({ value, onChange }: BookFiltersProps) {
       onChange={(event) => onChange({ ...value, query: event.target.value })}
       placeholder="Search by title or author..."
       size="small"
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        },
-      }}
       type="search"
       value={value.query}
     />

@@ -47,12 +47,17 @@
   web fonts.
 - Keep white and neutral gray as the foundation, with black interaction states,
   red favourite hearts, and gold rating stars.
+- Regular action buttons use a black background and retain the same color on
+  hover; hover feedback is limited to a small upward movement. Text-only
+  secondary actions such as Cancel are the explicit exception.
 - Keep restrained 5 px corners and do not use gradients.
 - Center desktop navigation within the full-width header independently of the
   brand and profile controls.
 - Keep filters in a white panel aligned with the catalogue card results.
 - Prefer responsive color image assets for editorial illustrations; do not construct
   detailed artwork from nested HTML or inline SVG shapes.
+- Use the supplied coffee artwork as the home hero background and the supplied
+  cat artwork as the 404 background rather than separate foreground images.
 - Let filter panels size to their content instead of stretching to match result
   columns.
 - Keep editorial-image motion subtle and disable it for reduced-motion users.
@@ -60,6 +65,10 @@
   as a separate action above the link layer.
 - Keep details breadcrumbs keyboard accessible and include a back-to-catalogue
   control before the breadcrumb trail.
+- The details favourite control is a large standalone red heart, not an
+  "Add to My Library" text button.
+- Keep the catalogue search field text-only; do not add a magnifying-glass
+  adornment.
 
 ## Verification
 

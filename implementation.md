@@ -70,6 +70,17 @@
 - [x] Simplified review-modal typography and enlarged its rating control.
 - [x] Removed imported/seeded rating values; rating summaries now derive only
   from BookHaven reviews and default to `0.0 / 5` with `0 ratings`.
+- [x] Replaced the home and 404 foreground illustrations with the newly supplied
+  coffee and cat images as responsive full-section backgrounds.
+- [x] Removed the home My Library action and catalogue search icon.
+- [x] Replaced the details-page library button with a large standalone favourite
+  heart.
+- [x] Standardized regular buttons to black with movement-only hover feedback,
+  retaining Cancel as the secondary text-button style.
+- [x] Enlarged the review-entry stars and changed the profile avatar background
+  to neutral gray.
+- [x] Normalized the existing SQLite rating summaries from local review rows so
+  legacy imported totals are removed without deleting user data.
 
 ## Current schema
 

@@ -45,24 +45,33 @@ export const theme = createTheme({
           minHeight: 48,
           paddingInline: 24,
           textTransform: 'none',
+          transition: 'transform 150ms ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+          },
+          '&:active': {
+            transform: 'translateY(0)',
+          },
           '&.MuiButton-contained': {
             backgroundColor: '#202020',
             color: '#ffffff',
           },
           '&.MuiButton-contained:hover': {
-            backgroundColor: '#454545',
+            backgroundColor: '#202020',
           },
           '&.MuiButton-outlined': {
             borderColor: '#202020',
-            color: '#202020',
+            backgroundColor: '#202020',
+            color: '#ffffff',
           },
           '&.MuiButton-outlined:hover': {
-            borderColor: '#000000',
+            borderColor: '#202020',
             backgroundColor: '#202020',
             color: '#ffffff',
           },
           '&.MuiButton-text': {
-            color: '#202020',
+            backgroundColor: '#202020',
+            color: '#ffffff',
           },
           '&.MuiButton-text:hover': {
             backgroundColor: '#202020',
@@ -74,7 +83,11 @@ export const theme = createTheme({
           },
           '&.MuiButton-outlined.Mui-disabled': {
             borderColor: '#d4d4d4',
+            backgroundColor: '#e5e5e5',
             color: '#8a8a8a',
+          },
+          '&.Mui-disabled': {
+            transform: 'none',
           },
         },
       },

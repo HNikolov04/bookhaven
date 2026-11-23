@@ -13,7 +13,7 @@ export function ErrorState({
     <Alert
       severity="error"
       action={
-        <Button color="inherit" onClick={onRetry} size="small">
+        <Button color="secondary" onClick={onRetry} size="small" variant="contained">
           Try again
         </Button>
       }

@@ -216,21 +216,22 @@ export function BookDetailsPage() {
               <h1>{book.title}</h1>
               <p className="book-details-author">By {book.author.name}</p>
             </div>
-            <Button
+            <IconButton
               aria-pressed={book.isFavourite}
-              color="secondary"
+              aria-label={book.isFavourite
+                ? `Remove ${book.title} from My Library`
+                : `Add ${book.title} to My Library`}
+              className="details-favourite-button"
               disabled={favourite.isPending}
               onClick={() => favourite.mutate({
                 bookId: book.id,
                 isFavourite: book.isFavourite,
               })}
-              startIcon={favourite.isPending
-                ? <CircularProgress color="inherit" size={17} />
-                : <HeartIcon filled={book.isFavourite} />}
-              variant="contained"
             >
-              Add to My Library
-            </Button>
+              {favourite.isPending
+                ? <CircularProgress color="inherit" size={28} />
+                : <HeartIcon filled={book.isFavourite} />}
+            </IconButton>
           </div>
 
           <div className="genre-chips">
@@ -317,14 +318,20 @@ export function BookDetailsPage() {
                     <p>{review.text}</p>
                     {isOwn && (
                       <div className="review-card__actions">
-                        <Button onClick={openReviewDialog} size="small">
+                        <Button
+                          color="secondary"
+                          onClick={openReviewDialog}
+                          size="small"
+                          variant="contained"
+                        >
                           Edit
                         </Button>
                         <Button
-                          color="error"
+                          color="secondary"
                           disabled={deleteReview.isPending}
                           onClick={() => void removeReview(review.id)}
                           size="small"
+                          variant="contained"
                         >
                           Delete
                         </Button>

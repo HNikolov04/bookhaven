@@ -17,7 +17,7 @@ export function FeaturedBooks() {
             <h2 className="section-heading" id="featured-heading">Featured books</h2>
             <p className="muted-copy">A fresh shelf of timeless fiction to begin with.</p>
           </div>
-          <Button component={Link} to="/books" variant="text">
+          <Button component={Link} to="/books" variant="contained">
             View all books
           </Button>
         </div>

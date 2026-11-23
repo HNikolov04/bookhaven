@@ -50,7 +50,12 @@ export function ReviewForm({
       {error && <Alert severity="error">{error}</Alert>}
       <div className="review-form__actions">
         {onCancel && (
-          <Button disabled={isSaving} onClick={onCancel} type="button">
+          <Button
+            className="button-secondary"
+            disabled={isSaving}
+            onClick={onCancel}
+            type="button"
+          >
             Cancel
           </Button>
         )}
