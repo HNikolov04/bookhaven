@@ -7,7 +7,7 @@
 | Domain | Entities, navigation properties, and domain enums |
 | Application | DTOs, repository interfaces, mapping, validation, and service |
 | Persistence | DbContext, repositories, and one configuration per entity |
-| Api | Controllers, ApiDtos, API enums, JWT, extensions, and composition root |
+| Api | Controllers, ApiDtos, API enums, bearer setup, extensions, and composition root |
 | Tests | Small deterministic unit tests |
 
 - There is no Infrastructure project.
@@ -78,6 +78,7 @@ ApiDto <-> Application DTO <-> Repository DTO <-> Entity
   without deleting user data.
 - The coursework setup uses `EnsureCreated`; use migrations when schema history
   becomes a deployment requirement.
+- Do not reference EF Core design-time tooling until migrations are introduced.
 
 ## HTTP and authentication
 

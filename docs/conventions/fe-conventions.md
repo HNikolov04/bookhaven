@@ -68,8 +68,8 @@
 - Center desktop navigation within the full-width header independently of the
   brand and profile controls.
 - Keep filters in a white panel aligned with the catalogue card results.
-- Prefer responsive color image assets for editorial illustrations; do not construct
-  detailed artwork from nested HTML or inline SVG shapes.
+- Prefer responsive color image assets for editorial illustrations; do not
+  construct detailed artwork from nested HTML or inline SVG shapes.
 - Use the supplied coffee artwork as the home hero background and the supplied
   cat artwork as the 404 background rather than separate foreground images.
 - Let filter panels size to their content instead of stretching to match result

@@ -1,142 +1,61 @@
-# BookHaven Implementation
+# BookHaven Implementation Status
 
 - **Last updated:** 2026-11-23
-- **Current phase:** Functional polish and code-quality hardening
+- **Phase:** Functional polish and code-quality hardening
 
-## Completed
+This file tracks current implementation state. Architecture rationale belongs
+in the ADR, and coding rules belong in the convention documents.
 
-- [x] Book domain includes title, short/long description, author, picture URL,
-  multiple genres, pages, publish year, average stars, vote count, and reviews.
-- [x] Author includes name and description.
-- [x] Review includes user, book, text, stars, and creation time.
-- [x] User includes email/password hash and favourite books; username removed.
-- [x] Added `BookGenre` and `UserFavouriteBook` navigation entities.
-- [x] Added one EF configuration file per entity.
-- [x] Removed book create/update/delete repository and API operations.
-- [x] Added authenticated `GetAllBooks`, `GetBook`, favourite, and review routes.
-- [x] Split `BooksController`, `UsersController`, and `BaseController`.
-- [x] Added minimal Program extensions for services, configuration, and pipeline.
-- [x] Split every backend DTO and enum into its own file.
-- [x] Guarded the whole frontend application behind login/register.
-- [x] Removed header/footer from public auth routes.
-- [x] Added top-right profile avatar with email and Logout dropdown.
-- [x] Replaced local My Library persistence with authenticated favourites query.
-- [x] Added automatic sign-out on API `401`.
-- [x] Added eight application-service unit tests.
-- [x] Added a VS Code full-stack task for the frontend and backend.
-- [x] Configured API HTTP `5000`, HTTPS `7000`, and IIS Express SSL `44300`.
-- [x] Added Swagger UI and automatic local opening at startup.
-- [x] Added twelve deterministic catalogue books with Open Library covers.
-- [x] Implemented catalogue search, genre filtering, sorting, pagination, and
-  a responsive card grid with URL-backed filter state.
-- [x] Implemented responsive book details with metadata, ratings, genres, and
-  full descriptions.
-- [x] Implemented favourite add/remove and server-backed My Library management.
-- [x] Implemented review add/edit/delete with ownership enforcement.
-- [x] Added password confirmation validation to frontend registration and API.
-- [x] Simplified all card borders to standard solid borders.
-- [x] Renamed the application service and interface to `BookService` and
-  `IBookService`.
-- [x] Kept white and gray as the interface foundation with black interaction
-  states and buttons, red favourite hearts, gold ratings, and no gradients.
-- [x] Added pointer feedback to interactive controls and underline-only header
-  navigation states.
-- [x] Reworked the profile avatar and dropdown with a neutral person icon.
-- [x] Centered desktop navigation independently inside the full-width header.
-- [x] Removed the catalogue list-view mode and redundant section kickers.
-- [x] Aligned catalogue filters in a white panel beside the complete card grid.
-- [x] Reworked book reviews into a server-backed summary, rating breakdown,
-  review list, and centered rating/text modal without a display-name field.
-- [x] Replaced constructed home and 404 artwork with responsive color image
-  assets and removed the obsolete illustration markup/styles.
-- [x] Removed the catalogue result-count row and made the filter panel size to
-  its own content.
-- [x] Reduced desktop navigation sizing, enlarged the profile control, and
-  removed extra profile-menu list spacing.
-- [x] Removed custom Fraunces/Inter font packages and overrides in favour of
-  MUI's standard system typography.
-- [x] Standardized functional icon rendering through MUI `SvgIcon`; only the
-  BookHaven logo remains a custom brand SVG.
-- [x] Added subtle reduced-motion-safe animation to the home and 404 images.
-- [x] Made complete book cards open their details route while preserving the
-  independent favourite action.
-- [x] Confirmed book IDs as `Guid` values throughout the backend and opaque
-  strings at the frontend boundary.
-- [x] Added a back-to-catalogue control before the book-details breadcrumbs and
-  replaced the catalogue search glyph with a clean MUI icon.
-- [x] Added URL-backed server pagination to My Library.
-- [x] Standardized black button hover states while keeping favourite selection
-  visible only through the red heart.
-- [x] Simplified review-modal typography and enlarged its rating control.
-- [x] Removed imported/seeded rating values; rating summaries now derive only
-  from BookHaven reviews and default to `0.0 / 5` with `0 ratings`.
-- [x] Replaced the home and 404 foreground illustrations with the newly supplied
-  coffee and cat images as responsive full-section backgrounds.
-- [x] Removed the home My Library action and catalogue search icon.
-- [x] Replaced the details-page library button with a large standalone favourite
-  heart.
-- [x] Standardized regular buttons to black with movement-only hover feedback,
-  retaining Cancel as the secondary text-button style.
-- [x] Enlarged the review-entry stars and changed the profile avatar background
-  to neutral gray.
-- [x] Normalized rating summaries from local review rows so imported totals are
-  not carried into the PostgreSQL database.
-- [x] Allowed multiple reviews by the same user for one book through a
-  non-unique `(BookId, UserId)` index.
-- [x] Made the reviews-section action always add a blank review while each
-  owned review retains independent Edit/Delete controls.
-- [x] Removed hover movement from the profile control.
-- [x] Moved `JwtTokenService` and typed JWT options from Api to Application.
-- [x] Replaced the SQLite provider and fallback connection with PostgreSQL via
-  Npgsql; database credentials now come from user secrets or environment.
-- [x] Centralized frontend book query keys, genre labels, filter options, and
-  sort options so cache invalidation and catalogue metadata have one source.
-- [x] Extracted the cohesive reviews feature from the details route into its
-  own typed component while keeping all HTTP work in React Query hooks.
-- [x] Added reusable, user-visible favourite mutation errors alongside the
-  existing pending states.
-- [x] Removed the unused LocalStorage hook, identity book mapper/API alias,
-  obsolete alternate artwork, dead CSS selectors, and Vite starter comments.
-- [x] Audited the frontend dependency boundary and retained only declared
-  application packages; no new runtime dependency was required.
+## Frontend
 
-## Current schema
+- [x] Public login and registration with matching-password validation
+- [x] JWT session provider, versioned storage, automatic `401` sign-out
+- [x] Protected application layout with responsive header, profile menu, footer
+- [x] Home page with responsive supplied artwork and featured books
+- [x] Catalogue search, genre filter, sorting, and URL-backed pagination
+- [x] Responsive book cards with whole-card details navigation
+- [x] Dynamic `/books/:id` details page with back navigation and breadcrumbs
+- [x] Red favourite controls backed by authenticated API mutations
+- [x] Paginated My Library page backed by server favourites
+- [x] Review summary, distribution, list, and add/edit/delete dialog
+- [x] Multiple independently editable reviews per user and book
+- [x] Loading, error, empty, pending-mutation, and custom 404 states
+- [x] MUI controls, Tailwind build pipeline, responsive project styling
+- [x] Centralized book query keys, genres, labels, and sort options
+- [x] HTTP isolated behind Axios API functions and React Query hooks
+- [x] Removed unused LocalStorage abstraction, identity mapper/API alias,
+  duplicate artwork, dead CSS, and starter configuration comments
 
-```mermaid
-erDiagram
-    AUTHOR ||--o{ BOOK : writes
-    BOOK ||--o{ BOOK_GENRE : has
-    BOOK ||--o{ REVIEW : receives
-    USER ||--o{ REVIEW : writes
-    BOOK ||--o{ USER_FAVOURITE_BOOK : saved
-    USER ||--o{ USER_FAVOURITE_BOOK : owns
-```
+## Backend
 
-## Endpoints
-
-| Method | Route | Auth |
-| --- | --- | --- |
-| `GET` | `/api/books` | Required |
-| `GET` | `/api/books/{id}` | Required |
-| `POST` | `/api/books/{id}/favourites` | Required |
-| `DELETE` | `/api/books/{id}/favourites` | Required/owner |
-| `POST` | `/api/books/{id}/reviews` | Required |
-| `PUT` | `/api/books/reviews/{reviewId}` | Required/owner |
-| `DELETE` | `/api/books/reviews/{reviewId}` | Required/owner |
-| `POST` | `/api/users/register` | Public |
-| `POST` | `/api/users/login` | Public |
+- [x] Domain, Application, Persistence, Api, and Tests projects
+- [x] GUID entities for books, authors, users, and reviews
+- [x] Multiple enum genres through `BookGenre`
+- [x] Explicit favourite join entity and review ownership
+- [x] One EF Core configuration file per entity
+- [x] PostgreSQL-only persistence through Npgsql
+- [x] Deterministic twelve-book seed with BookHaven-only rating totals
+- [x] Read-only book catalogue with search, filter, sort, and pagination
+- [x] Favourite and review commands with authorization checks
+- [x] PBKDF2 registration/login and two-hour JWT issuance
+- [x] JWT service and typed options in Application
+- [x] Manual Api/Application/Repository/Entity DTO mapping
+- [x] Minimal `Program.cs` with focused registration/configuration extensions
+- [x] Swagger and configured HTTP, HTTPS, and IIS Express launch profiles
+- [x] Central package management and warnings-as-errors builds
+- [x] Removed SQLite and unused EF Core design-time dependency
 
 ## Verification
 
-- [x] Backend build: 0 warnings, 0 errors.
-- [x] Backend tests: 8 passed, 0 failed.
-- [x] Frontend ESLint passed.
-- [x] Frontend production build passed.
+- [x] Backend Release build: 0 warnings, 0 errors
+- [x] Backend unit tests: 8 passed, 0 failed
+- [x] Frontend ESLint: passed
+- [x] Frontend production build: passed
+- [x] Static audit found no unused custom CSS selectors or stale imports
 
-## Next work
+## Remaining work
 
-- [ ] Replace deterministic seed data with an import only if the coursework
-  requires a larger live catalogue.
-- [ ] Add focused frontend component tests at the end of the project.
-- [ ] Replace development JWT key for deployment.
-- [ ] Introduce migrations when schema history is required.
+- [ ] Add focused frontend component tests at the end of the project
+- [ ] Replace the development JWT signing key for deployment
+- [ ] Introduce EF Core migrations when deployment needs schema history
+- [ ] Split the global stylesheet by feature if its size begins to slow changes

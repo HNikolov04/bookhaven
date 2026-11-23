@@ -1,72 +1,160 @@
-# ADR-0000: Authenticated read-only catalogue architecture
+# ADR-0000: BookHaven application architecture
 
 - **Status:** Accepted
 - **Date:** 2026-11-19
+- **Last reviewed:** 2026-11-23
+- **Scope:** Frontend and backend
 
 ## Context
 
-BookHaven must demonstrate layered DTO transfer, manual mapping, EF Core
-relationships, favourites, reviews, and simple JWT authentication while staying
-small enough for coursework defense.
+BookHaven is a frontend-focused university project, but it also needs a small
+API to demonstrate authentication, persistence, DTO transfer, HTTP data
+operations, and user-owned data. The implementation must remain understandable
+during a coursework defense and must not require paid services or unnecessary
+infrastructure.
+
+The current product scope is an authenticated, read-only book catalogue. Users
+may write only their account data, favourites, and reviews. Administrative book
+management, roles, refresh tokens, and external identity providers are outside
+scope.
+
+## Decision drivers
+
+- Keep the frontend responsive, typed, and easy to navigate.
+- Keep all HTTP concerns outside React components.
+- Make API and persistence boundaries visible through explicit DTOs.
+- Protect user-specific operations on both frontend and backend.
+- Use real relational persistence without adding deployment infrastructure.
+- Prefer a small number of direct abstractions over framework-heavy patterns.
+- Keep the project deterministic and demonstrable without a third-party API.
 
 ## Decision
 
-Use Domain, Application, Persistence, and Api runtime projects. Keep one
-application service, one book repository, a minimal user repository, and two API
-controllers: `BooksController` and `UsersController`. Shared JWT user extraction
-lives in `BaseController`.
+### Frontend
 
-The catalogue is read-only through HTTP. The only book-related writes are adding
-a favourite and creating/editing/deleting the current user's review.
+Use React, Vite, and strict TypeScript with React Router for routing. Login and
+registration are public routes; `ProtectedRoute` guards `MainLayout` and every
+application page. `/books/:id` is the dynamic details route and `*` renders the
+custom 404 page.
 
-Domain relationships:
+Use Material UI for accessible controls and UI primitives. Tailwind remains in
+the styling pipeline, while project CSS owns the current responsive visual
+system. Organize code by feature and keep only genuinely shared UI under
+`shared`.
+
+Use TanStack React Query for server state and Axios for HTTP. Components call
+custom query or mutation hooks, hooks call feature API functions, and those
+functions use one configured Axios client. Query keys are centralized per
+feature. Loading, failure, empty, and mutation-pending states are visible in the
+UI.
+
+Keep only the JWT and minimal email/id user record in LocalStorage under the
+versioned key `bookhaven.auth.v1`. Favourites, catalogue data, and reviews are
+server state and are never duplicated into LocalStorage. A `401` response clears
+the stored session.
+
+### Backend
+
+Use four runtime projects plus tests:
 
 ```text
-Author 1 -> many Books
-Book 1 -> many BookGenres (Genre enum values)
-Book 1 -> many Reviews <- 1 User
-Book many <-> many Users through UserFavouriteBook
+Api -> Application -> Domain
+Api -> Persistence -> Application -> Domain
 ```
 
-Books persist average stars and rating vote count. Repository review operations
-recalculate both values.
+- **Domain** owns entities, navigation properties, and `Genre`.
+- **Application** owns use cases, validation, service DTOs, repository
+  contracts/DTOs, manual mapping, password hashing, and JWT creation.
+- **Persistence** owns EF Core, PostgreSQL repositories, entity configuration,
+  and deterministic seed data.
+- **Api** owns controllers, API DTOs/enums, API mapping, bearer validation,
+  CORS, Swagger, and the composition root.
 
-Users contain email and password hash only. Registration/login use PBKDF2 and a
-two-hour JWT. All book routes require authentication; only register/login are
-anonymous.
+Use `BookService` as the single application service, `BookRepository` for book,
+favourite, and review persistence, and `UserRepository` for registration and
+login lookup. Do not add a generic repository because the two aggregates need
+different queries and commands.
 
-PostgreSQL is the sole persistence provider through Npgsql. JWT creation and
-its typed configuration model live in Application; Api remains responsible for
-reading configuration and configuring bearer-token validation.
+Use `BooksController` and `UsersController`. `BaseController` extracts the
+authenticated user identifier shared by protected actions. The catalogue has no
+HTTP create/update/delete operations; its only writes are favourite and review
+commands.
 
-DTO transfer remains explicit:
+Keep DTO transfer explicit:
 
 ```text
 ApiDto <-> Application DTO <-> Repository DTO <-> Entity
 ```
 
-Every DTO and enum has its own file. Mapping is handwritten. `Program.cs` stays
-minimal through `IServiceCollectionExtensions`, `IConfigurationExtensions`, and
-`WebApplicationExtensions`.
+Each DTO and enum lives in its own file. Mapping is handwritten so the layer
+boundaries are visible and explainable. No entity or tracked query escapes the
+persistence boundary.
 
-The frontend places login/register outside `MainLayout`, guards every other
-route, clears auth after `401`, and exposes email/logout through a profile-avatar
-menu. Favourites are server state queried with React Query.
+### Data and authentication
+
+Use PostgreSQL through Npgsql as the only database provider. Every entity has a
+separate EF Core configuration. The current coursework setup uses
+`EnsureCreated` and idempotent deterministic seeding; migrations are deferred
+until schema history or deployment requires them.
+
+Use GUID identifiers. A book has one author, multiple enum genres, reviews, and
+favouriting users through explicit join entities. A user has email and password
+hash only. Users may create multiple independent reviews for the same book.
+Rating totals are recalculated exclusively from persisted BookHaven reviews;
+unreviewed books start at `0.0 / 5` and `0 ratings`.
+
+Use PBKDF2 password hashes and two-hour signed JWT bearer tokens. JWT creation
+and typed options live in Application; Api reads configuration and validates
+tokens. Only registration and login allow anonymous access. Signing keys and
+database credentials remain outside committed production configuration.
+
+## Alternatives considered
+
+### Runtime Open Library catalogue API requests
+
+Rejected. They would make normal use depend on an external service and would
+split ownership of ratings and availability. The seed keeps catalogue behavior
+deterministic. Seeded cover URLs remain externally hosted, so a missing image
+host can affect artwork but not catalogue data or application operations.
+
+### LocalStorage for favourites and reviews
+
+Rejected after the backend was introduced. These are user-owned domain records
+that must be consistent across sessions and protected by server authorization.
+
+### ASP.NET Core Identity or hosted OAuth
+
+Deferred. Either is appropriate for a production system, but both introduce
+flows and schema beyond the coursework's email/password JWT requirement. The
+current auth boundary can be replaced later without changing feature pages.
+
+### AutoMapper, MediatR, generic repositories, and an Infrastructure project
+
+Rejected. They add indirection without enough use cases to justify it. Direct
+mapping and focused interfaces make control flow clearer at this scale.
+
+### HttpOnly authentication cookies
+
+Deferred. Cookies improve token isolation but require a deliberate same-site,
+CORS, and CSRF design. LocalStorage JWT is an accepted coursework tradeoff, not
+a production security recommendation.
 
 ## Consequences
 
-- Catalogue content is seeded through persistence because the API has no
-  book-write endpoints. A later import can replace the deterministic seed.
-- Email is the only displayed user identity.
-- Multiple genres remain strongly typed without a Genre lookup table.
-- Persisted rating summaries require recalculation after review writes.
-- Local development requires a PostgreSQL connection string supplied outside
-  source control.
-- LocalStorage JWT is intentionally simple but less hardened than HttpOnly
-  cookies; production keys must not be committed.
-- The explicit DTO-per-boundary approach is repetitive but easy to explain.
+- The application runs locally with only Node.js, .NET, and PostgreSQL.
+- Catalogue reads, favourites, and reviews have one authoritative data source.
+- The layered backend contains repetitive DTOs, accepted in exchange for clear
+  boundaries and manual mapping evidence.
+- Broad book-query invalidation is simple and correct for the current catalogue
+  size; targeted cache updates can be introduced only if needed.
+- Database startup requires a valid external connection string.
+- Production deployment must replace the development JWT key and should adopt
+  migrations and stronger session storage.
+- Frontend component tests remain the principal unfinished quality safeguard.
 
 ## Revisit when
 
-Add migrations, refresh tokens, roles, or split services/controllers only if the
-coursework scope grows and provides a concrete need.
+Revisit this decision only when requirements add administrative book editing,
+roles, password recovery, third-party login, refresh tokens, deployment schema
+history, substantially larger catalogue traffic, or multiple application
+services with genuinely independent use cases.

@@ -70,9 +70,7 @@ temp/
 .idea/
 .fleet/
 .vscode/*
-!.vscode/extensions.json
 !.vscode/launch.json
-!.vscode/settings.json
 !.vscode/tasks.json
 *.suo
 *.ntvs*
