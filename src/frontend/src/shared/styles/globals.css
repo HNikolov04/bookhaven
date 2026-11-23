@@ -134,25 +134,6 @@ img {
   line-height: 1.08;
 }
 
-.section-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  color: var(--ink-accent-dark);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.section-kicker::before {
-  width: 1.75rem;
-  height: 2px;
-  background: var(--ink-accent);
-  content: '';
-}
-
 .muted-copy {
   color: var(--ink-text-muted);
 }
@@ -1257,21 +1238,6 @@ img {
 .site-footer p {
   margin: 0;
   font-size: 0.82rem;
-}
-
-.placeholder-page {
-  min-height: calc(100vh - 180px);
-  padding-block: clamp(5rem, 12vw, 9rem);
-}
-
-.placeholder-page {
-  max-width: 720px;
-}
-
-.placeholder-page p {
-  margin: 1rem 0 2rem;
-  font-size: 1.05rem;
-  line-height: 1.75;
 }
 
 .not-found-page {

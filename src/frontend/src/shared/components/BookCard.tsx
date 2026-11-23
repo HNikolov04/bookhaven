@@ -2,6 +2,7 @@ import { CircularProgress, IconButton, SvgIcon, Tooltip } from '@mui/material'
 import { Link } from 'react-router'
 import { useFavouriteMutation } from '../../features/books/hooks/useFavouriteMutation'
 import type { BookSummary } from '../../features/books/types'
+import { RequestErrorSnackbar } from './RequestErrorSnackbar'
 
 type BookCardProps = {
   book: BookSummary
@@ -76,6 +77,11 @@ export function BookCard({ book }: BookCardProps) {
         <p className="book-card__author">{book.author.name}</p>
         <span>{book.publishYear}</span>
       </div>
+      <RequestErrorSnackbar
+        message="Your library could not be updated. Please try again."
+        onClose={favourite.reset}
+        open={favourite.isError}
+      />
     </article>
   )
 }

@@ -1,7 +1,5 @@
 import { axiosClient } from '../../../shared/api/axiosClient'
-import { mapBookApiDtoToBook } from '../../../shared/utils/bookMappers'
 import type {
-  BookApiDto,
   BookQuery,
   BookSummary,
   PagedApiDto,
@@ -10,7 +8,7 @@ import type {
 } from '../types'
 
 export async function getBooks(query: BookQuery): Promise<PagedApiDto<BookSummary>> {
-  const response = await axiosClient.get<PagedApiDto<BookApiDto>>('/books', {
+  const response = await axiosClient.get<PagedApiDto<BookSummary>>('/books', {
     params: {
       search: query.search || undefined,
       genre: query.genre,
@@ -19,43 +17,37 @@ export async function getBooks(query: BookQuery): Promise<PagedApiDto<BookSummar
       pageSize: query.pageSize,
     },
   })
-  return {
-    ...response.data,
-    items: response.data.items.map(mapBookApiDtoToBook),
-  }
+  return response.data
 }
 
 export async function getBook(bookId: string): Promise<BookSummary> {
-  const response = await axiosClient.get<BookApiDto>(`/books/${bookId}`)
-  return mapBookApiDtoToBook(response.data)
+  const response = await axiosClient.get<BookSummary>(`/books/${bookId}`)
+  return response.data
 }
 
 export async function getFeaturedBooks(): Promise<BookSummary[]> {
-  const response = await axiosClient.get<PagedApiDto<BookApiDto>>('/books', {
+  const response = await axiosClient.get<PagedApiDto<BookSummary>>('/books', {
     params: {
       isFeatured: true,
       page: 1,
       pageSize: 4,
     },
   })
-  return response.data.items.map(mapBookApiDtoToBook)
+  return response.data.items
 }
 
 export async function getFavouriteBooks(
   page: number,
   pageSize: number,
 ): Promise<PagedApiDto<BookSummary>> {
-  const response = await axiosClient.get<PagedApiDto<BookApiDto>>('/books', {
+  const response = await axiosClient.get<PagedApiDto<BookSummary>>('/books', {
     params: {
       favouritesOnly: true,
       page,
       pageSize,
     },
   })
-  return {
-    ...response.data,
-    items: response.data.items.map(mapBookApiDtoToBook),
-  }
+  return response.data
 }
 
 export async function addBookToFavourites(bookId: string): Promise<void> {

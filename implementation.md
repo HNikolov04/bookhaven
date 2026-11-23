@@ -1,7 +1,7 @@
 # BookHaven Implementation
 
 - **Last updated:** 2026-11-23
-- **Current phase:** Authenticated catalogue foundation
+- **Current phase:** Functional polish and code-quality hardening
 
 ## Completed
 
@@ -89,6 +89,16 @@
 - [x] Moved `JwtTokenService` and typed JWT options from Api to Application.
 - [x] Replaced the SQLite provider and fallback connection with PostgreSQL via
   Npgsql; database credentials now come from user secrets or environment.
+- [x] Centralized frontend book query keys, genre labels, filter options, and
+  sort options so cache invalidation and catalogue metadata have one source.
+- [x] Extracted the cohesive reviews feature from the details route into its
+  own typed component while keeping all HTTP work in React Query hooks.
+- [x] Added reusable, user-visible favourite mutation errors alongside the
+  existing pending states.
+- [x] Removed the unused LocalStorage hook, identity book mapper/API alias,
+  obsolete alternate artwork, dead CSS selectors, and Vite starter comments.
+- [x] Audited the frontend dependency boundary and retained only declared
+  application packages; no new runtime dependency was required.
 
 ## Current schema
 

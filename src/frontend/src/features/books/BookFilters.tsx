@@ -6,6 +6,7 @@ import {
   Select,
   TextField,
 } from '@mui/material'
+import { genreOptions, sortOptions } from './bookOptions'
 import type { BookSort, Genre } from './types'
 
 export type BookFilterValues = {
@@ -18,17 +19,6 @@ type BookFiltersProps = {
   value: BookFilterValues
   onChange: (value: BookFilterValues) => void
 }
-
-const genreOptions: { value: Genre; label: string }[] = [
-  { value: 'fiction', label: 'Fiction' },
-  { value: 'scienceFiction', label: 'Science Fiction' },
-  { value: 'fantasy', label: 'Fantasy' },
-  { value: 'mystery', label: 'Mystery' },
-  { value: 'nonFiction', label: 'Non-Fiction' },
-  { value: 'history', label: 'History' },
-  { value: 'biography', label: 'Biography' },
-  { value: 'romance', label: 'Romance' },
-]
 
 export function BookSearch({ value, onChange }: BookFiltersProps) {
   return (
@@ -86,11 +76,11 @@ export function BookFilters({ value, onChange }: BookFiltersProps) {
             })}
             value={value.sort}
           >
-            <MenuItem value="titleAscending">Title (A–Z)</MenuItem>
-            <MenuItem value="titleDescending">Title (Z–A)</MenuItem>
-            <MenuItem value="authorAscending">Author (A–Z)</MenuItem>
-            <MenuItem value="newest">Newest first</MenuItem>
-            <MenuItem value="oldest">Oldest first</MenuItem>
+            {sortOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </div>

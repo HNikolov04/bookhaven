@@ -52,8 +52,6 @@ export type ReviewApiDto = {
   createdAtUtc: string
 }
 
-export type BookApiDto = BookSummary
-
 export type PagedApiDto<T> = {
   items: T[]
   page: number

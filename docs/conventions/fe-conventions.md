@@ -7,8 +7,14 @@
 - Components never call Axios directly.
 - HTTP flow is component -> custom React Query hook -> API function -> shared
   Axios client.
+- Keep React Query keys in the feature-level `bookQueryKeys` factory. Mutations
+  invalidate through that factory rather than repeating string arrays.
 - The Axios interceptor attaches JWT and clears auth after `401`.
 - Server data belongs to React Query, not LocalStorage.
+- Consume an API DTO directly when it already matches the view model. Add a
+  mapper only when it performs a real boundary transformation.
+- Every mutation exposes a pending state and a visible, user-friendly failure
+  message; logging alone is not error handling.
 
 ## Authentication and routing
 
@@ -29,7 +35,8 @@
 - Adding a favourite uses `POST /api/books/{id}/favourites`.
 - My Library queries `GET /api/books?favouritesOnly=true` with URL-backed
   server pagination.
-- Favourite and book mutations invalidate `['books']` query keys.
+- Favourite and review mutations invalidate the relevant entries through
+  `bookQueryKeys`.
 - The catalogue uses one responsive card grid; do not add a list-view toggle.
 - Reviews are server-backed and displayed below the full book summary.
 - Review forms contain only rating and text; identity comes from the JWT user.
@@ -43,6 +50,9 @@
 ## TypeScript and UI
 
 - Strict TypeScript, no `any`, and named exports.
+- Extract a feature component when it owns a cohesive responsibility or
+  substantially simplifies a route. Do not create one-file abstractions for
+  fragments that have no reuse, state, or independent responsibility.
 - One clear `h1` per page and labelled controls.
 - Use MUI as the only component library. Use Tailwind/CSS for responsive layout
   and project-specific styling.

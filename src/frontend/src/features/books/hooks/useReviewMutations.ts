@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addReview, deleteReview, updateReview } from '../api/booksApi'
 import type { SaveReviewRequest } from '../types'
+import { bookQueryKeys } from './bookQueryKeys'
 
 type AddReviewVariables = SaveReviewRequest & { bookId: string }
 type UpdateReviewVariables = SaveReviewRequest & { reviewId: string }
 
 function useInvalidateBooks() {
   const queryClient = useQueryClient()
-  return () => queryClient.invalidateQueries({ queryKey: ['books'] })
+  return () => queryClient.invalidateQueries({ queryKey: bookQueryKeys.all })
 }
 
 export function useAddReviewMutation() {

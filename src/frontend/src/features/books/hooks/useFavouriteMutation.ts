@@ -3,6 +3,7 @@ import {
   addBookToFavourites,
   removeBookFromFavourites,
 } from '../api/booksApi'
+import { bookQueryKeys } from './bookQueryKeys'
 
 type FavouriteChange = {
   bookId: string
@@ -18,7 +19,7 @@ export function useFavouriteMutation() {
         ? removeBookFromFavourites(bookId)
         : addBookToFavourites(bookId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['books'] })
+      await queryClient.invalidateQueries({ queryKey: bookQueryKeys.all })
     },
   })
 }
