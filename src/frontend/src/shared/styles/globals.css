@@ -1,0 +1,1501 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 37.5rem;
+  --breakpoint-md: 56.25rem;
+  --breakpoint-lg: 75rem;
+  --breakpoint-xl: 96rem;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ink-primary: #202020;
+  --ink-primary-deep: #202020;
+  --ink-accent: #202020;
+  --ink-accent-dark: #000000;
+  --ink-accent-soft: #f3f3f3;
+  --ink-favourite: #dc2626;
+  --ink-favourite-soft: #fef2f2;
+  --ink-rating: #f59e0b;
+  --ink-background: #ffffff;
+  --ink-background-muted: #f5f5f5;
+  --ink-background-warm: #eeeeee;
+  --ink-surface: #ffffff;
+  --ink-surface-glass: rgba(255, 255, 255, 0.94);
+  --ink-text: #252525;
+  --ink-text-muted: #6a6a6a;
+  --ink-border: #c7c7c7;
+  --ink-border-soft: #e1e1e1;
+  --ink-shadow: rgba(48, 48, 48, 0.12);
+  --ink-focus: #454545;
+  --ink-book-cream: #eeeeee;
+  --card-radius: 5px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--ink-background-muted);
+  color: var(--ink-text);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+a,
+button,
+select,
+[role='button'],
+.MuiButtonBase-root,
+.MuiFormControlLabel-root,
+input[type='checkbox'],
+input[type='radio'] {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+.MuiButtonBase-root.Mui-disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
+.MuiIconButton-root {
+  transition: transform 150ms ease;
+}
+
+.MuiIconButton-root.MuiIconButton-root:hover {
+  background: transparent;
+  transform: translateY(-2px);
+}
+
+.MuiIconButton-root:active {
+  transform: translateY(0);
+}
+
+.button-secondary.MuiButton-root.MuiButton-text,
+.button-secondary.MuiButton-root.MuiButton-text:hover {
+  background: transparent;
+  color: var(--ink-primary-deep);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--ink-accent-soft);
+  color: var(--ink-primary-deep);
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ink-focus) 45%, transparent);
+  outline-offset: 3px;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.page-container {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.section-shell {
+  padding-block: clamp(3.5rem, 7vw, 6.5rem);
+}
+
+.section-heading {
+  margin: 0;
+  color: var(--ink-primary-deep);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.08;
+}
+
+.muted-copy {
+  color: var(--ink-text-muted);
+}
+
+.site-header.MuiAppBar-root {
+  z-index: 20;
+  padding-top: 0;
+  background: var(--ink-surface-glass);
+  color: var(--ink-primary-deep);
+  border-bottom: 1px solid var(--ink-border-soft);
+  backdrop-filter: blur(16px);
+}
+
+.site-header__inner.MuiToolbar-root {
+  position: relative;
+  width: 100%;
+  min-height: 56px;
+  padding: 0 clamp(1rem, 4vw, 4rem);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink-primary-deep);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 34px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.brand-mark__accent {
+  fill: var(--ink-accent);
+  stroke: var(--ink-accent);
+  stroke-width: 1;
+}
+
+.desktop-nav {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transform: translateX(-50%);
+}
+
+.nav-link {
+  position: relative;
+  padding: 0.7rem 0.6rem;
+  color: var(--ink-primary-deep);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.nav-link:hover {
+  color: var(--ink-primary-deep);
+}
+
+.nav-link::after {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.35rem;
+  left: 0.6rem;
+  height: 1px;
+  background: var(--ink-accent);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+
+.nav-link:hover::after,
+.nav-link--active::after {
+  transform: scaleX(1);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-left: auto;
+}
+
+.profile-avatar.MuiAvatar-root {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-background-warm);
+  color: var(--ink-primary-deep);
+}
+
+.profile-avatar svg,
+.profile-menu__avatar svg {
+  width: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.profile-menu__paper.MuiPaper-root {
+  min-width: 238px;
+  margin-top: 0.3rem;
+  overflow: hidden;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 16px 38px var(--ink-shadow);
+}
+
+.profile-menu__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.profile-menu__avatar.MuiAvatar-root {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  background: var(--ink-accent-soft);
+  color: var(--ink-accent-dark);
+}
+
+.profile-menu__identity > div {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.profile-menu__identity span {
+  color: var(--ink-text-muted);
+  font-size: 0.75rem;
+}
+
+.profile-menu__identity strong {
+  overflow: hidden;
+  color: var(--ink-primary-deep);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-menu__logout.MuiMenuItem-root {
+  display: flex;
+  min-height: 42px;
+  gap: 0.65rem;
+  padding: 0.5rem 0.8rem;
+  color: var(--ink-primary-deep);
+  font-weight: 700;
+}
+
+.profile-menu__logout.MuiMenuItem-root:hover {
+  background: var(--ink-background-muted);
+}
+
+.profile-menu__logout svg {
+  width: 18px;
+  fill: none;
+  stroke: var(--ink-accent-dark);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.MuiPopover-root .MuiMenu-list {
+  padding-block: 0.2rem;
+}
+
+.profile-menu .MuiMenu-list {
+  padding: 0;
+}
+
+.MuiPopover-root .MuiMenuItem-root {
+  min-height: 36px;
+  font-size: 0.82rem;
+}
+
+.header-icon-button.MuiIconButton-root {
+  width: 42px;
+  height: 42px;
+  color: var(--ink-primary-deep);
+}
+
+.header-icon-button svg {
+  width: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.mobile-menu-button.MuiIconButton-root {
+  display: none;
+}
+
+.mobile-drawer {
+  width: min(82vw, 320px);
+  min-height: 100%;
+  padding: 1.5rem 1rem;
+  background: var(--ink-background);
+  color: var(--ink-primary-deep);
+}
+
+.mobile-drawer__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--ink-border-soft);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.mobile-drawer .MuiListItemButton-root {
+  position: relative;
+  min-height: 48px;
+  padding-inline: 0.75rem;
+  background: transparent;
+  font-weight: 700;
+}
+
+.mobile-drawer .MuiListItemButton-root:hover,
+.mobile-drawer .MuiListItemButton-root.Mui-selected,
+.mobile-drawer .MuiListItemButton-root.Mui-selected:hover {
+  background: transparent;
+}
+
+.mobile-drawer .MuiListItemButton-root::after {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.35rem;
+  left: 0.75rem;
+  height: 1px;
+  background: var(--ink-accent);
+  content: '';
+  transform: scaleX(0);
+  transition: transform 180ms ease;
+}
+
+.mobile-drawer .MuiListItemButton-root:hover::after,
+.mobile-drawer .MuiListItemButton-root.Mui-selected::after {
+  transform: scaleX(1);
+}
+
+.site-header__actions > .MuiIconButton-root:hover {
+  background: transparent;
+}
+
+.profile-button.MuiIconButton-root:hover {
+  transform: none;
+}
+
+.hero-section {
+  display: flex;
+  min-height: clamp(500px, 54vw, 690px);
+  background-color: #ead8c8;
+  background-image: url('/Cozy%20Coffee%20and%20Book%20Still%20Life-2.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.hero-section__inner {
+  display: flex;
+  align-items: center;
+}
+
+.hero-copy {
+  width: min(100%, 550px);
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.hero-copy h1 {
+  max-width: 12ch;
+  margin: 0;
+  color: var(--ink-primary-deep);
+  font-size: clamp(2.9rem, 6vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.hero-copy h1 span {
+  color: var(--ink-primary);
+}
+
+.hero-copy > p {
+  max-width: 37rem;
+  margin: 1.5rem 0 0;
+  color: var(--ink-text-muted);
+  font-size: clamp(1rem, 1.7vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.featured-section {
+  background: color-mix(in srgb, var(--ink-surface) 70%, transparent);
+  border-block: 1px solid color-mix(in srgb, var(--ink-border) 55%, transparent);
+}
+
+.section-title-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-title-row p {
+  margin: 0.65rem 0 0;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.4rem);
+}
+
+.book-card {
+  position: relative;
+  min-width: 0;
+  padding: 0.7rem 0.7rem 1rem;
+  overflow: hidden;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--ink-shadow) 75%, transparent);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.book-card:hover {
+  box-shadow: 0 18px 42px var(--ink-shadow);
+  transform: translateY(-4px);
+}
+
+.book-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.book-card__link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ink-focus) 45%, transparent);
+  outline-offset: 3px;
+}
+
+.book-card__cover-wrap {
+  position: relative;
+}
+
+.book-card__cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 3px;
+  object-fit: cover;
+  background: var(--ink-background-warm);
+}
+
+.book-card__cover--fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--ink-primary-deep);
+  color: var(--ink-surface);
+  text-align: center;
+}
+
+.book-card__cover--fallback span {
+  color: var(--ink-book-cream);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.book-card__cover--fallback strong {
+  font-size: 1.35rem;
+}
+
+.library-button.MuiIconButton-root {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-surface);
+  color: var(--ink-favourite);
+  box-shadow: 0 6px 14px var(--ink-shadow);
+  z-index: 2;
+}
+
+.library-button.MuiIconButton-root:hover {
+  background: var(--ink-surface);
+}
+
+.library-button svg {
+  width: 20px;
+}
+
+.book-card__content {
+  padding: 0.9rem 0.2rem 0;
+}
+
+.book-card__title {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink-primary-deep);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.book-card:hover .book-card__title {
+  color: var(--ink-accent-dark);
+}
+
+.book-card__content p {
+  min-height: 2.5em;
+  margin: 0.35rem 0 0;
+  color: var(--ink-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.book-card__content > span {
+  display: inline-block;
+  margin-top: 0.55rem;
+  color: var(--ink-accent-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.book-card--loading:hover {
+  transform: none;
+}
+
+.book-card__cover-skeleton.MuiSkeleton-root {
+  height: auto;
+  aspect-ratio: 2 / 3;
+  border-radius: 3px;
+  transform: none;
+}
+
+.empty-featured-state {
+  padding: 2rem;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  color: var(--ink-text-muted);
+  text-align: center;
+}
+
+.catalog-page {
+  min-height: calc(100vh - 114px);
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.catalog-header h1,
+.book-details-content h1,
+.reviews-section h2 {
+  margin: 0;
+  color: var(--ink-primary-deep);
+}
+
+.catalog-header h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1;
+}
+
+.catalog-header p {
+  margin: 0.55rem 0 1.35rem;
+  color: var(--ink-text-muted);
+}
+
+.catalog-search .MuiOutlinedInput-root {
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+}
+
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  margin-top: 1.6rem;
+}
+
+.catalog-sidebar {
+  align-self: start;
+  margin-top: 0;
+  padding: 1rem;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--ink-shadow) 70%, transparent);
+}
+
+.filter-group {
+  display: grid;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  border: 0;
+}
+
+.catalog-sidebar .filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group legend,
+.filter-group > label {
+  margin-bottom: 0.6rem;
+  color: var(--ink-primary-deep);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.filter-group .MuiFormControlLabel-root {
+  min-height: 33px;
+  margin: 0;
+}
+
+.filter-group .MuiCheckbox-root {
+  padding: 0.35rem;
+  color: var(--ink-border);
+}
+
+.filter-group .MuiCheckbox-root.Mui-checked {
+  color: var(--ink-accent);
+}
+
+.filter-group .MuiFormControlLabel-label {
+  font-size: 0.82rem;
+}
+
+.filter-group .MuiOutlinedInput-root {
+  height: 38px;
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  font-size: 0.82rem;
+}
+
+.filter-group .MuiSelect-select {
+  padding-block: 0.45rem;
+}
+
+.catalog-results {
+  min-width: 0;
+}
+
+.catalog-results .MuiPagination-root {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.catalog-empty {
+  padding: 4rem 2rem;
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-surface);
+  text-align: center;
+}
+
+.catalog-empty h2 {
+  margin: 0;
+}
+
+.catalog-empty p {
+  margin: 0.6rem 0 0;
+  color: var(--ink-text-muted);
+}
+
+.book-details-page {
+  min-height: calc(100vh - 114px);
+  padding-block: clamp(1.5rem, 4vw, 3.5rem) clamp(3rem, 7vw, 6rem);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--ink-text-muted);
+  font-size: 0.8rem;
+}
+
+.breadcrumbs__back.MuiIconButton-root {
+  width: 34px;
+  height: 34px;
+  margin-right: 0.1rem;
+  color: var(--ink-primary-deep);
+}
+
+.breadcrumbs__back.MuiIconButton-root:hover {
+  background: transparent;
+}
+
+.breadcrumbs > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--ink-text-muted);
+}
+
+.breadcrumbs a {
+  color: var(--ink-primary-deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.book-details-hero,
+.details-loading {
+  display: grid;
+  grid-template-columns: minmax(220px, 310px) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.book-details-cover {
+  padding: 0.7rem;
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-surface);
+  box-shadow: 0 16px 36px var(--ink-shadow);
+}
+
+.book-details-cover img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.book-details-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.book-details-content h1 {
+  font-size: clamp(2.5rem, 6vw, 4.3rem);
+  line-height: 1;
+}
+
+.book-details-author {
+  margin: 0.65rem 0 0;
+  color: var(--ink-text-muted);
+  font-weight: 600;
+}
+
+.details-heart {
+  color: var(--ink-favourite);
+}
+
+.details-favourite-button.MuiIconButton-root {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  color: var(--ink-favourite);
+}
+
+.details-favourite-button .details-heart {
+  width: 36px;
+  height: 36px;
+}
+
+.details-favourite-button.MuiIconButton-root:hover {
+  background: transparent;
+}
+
+.genre-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+}
+
+.genre-chips .MuiChip-root {
+  border-radius: 4px;
+  background: var(--ink-background-warm);
+  color: var(--ink-primary-deep);
+}
+
+.book-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.5rem;
+  margin-top: 1.6rem;
+  padding-block: 1rem;
+  border-block: 1px solid var(--ink-border-soft);
+  color: var(--ink-text-muted);
+  font-size: 0.86rem;
+}
+
+.book-facts > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.book-facts strong {
+  color: var(--ink-primary-deep);
+}
+
+.book-rating strong {
+  color: var(--ink-rating);
+}
+
+.book-long-description {
+  margin: 1.6rem 0 0;
+  color: var(--ink-text);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.book-author-description {
+  margin: 1rem 0 0;
+  color: var(--ink-text-muted);
+  font-size: 0.87rem;
+  font-style: italic;
+}
+
+.reviews-section {
+  width: 100%;
+  margin-top: clamp(3rem, 7vw, 5rem);
+}
+
+.reviews-section__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.reviews-section h2 {
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+.reviews-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.rating-summary {
+  padding: 1.2rem;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--ink-shadow) 70%, transparent);
+}
+
+.rating-summary__score {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.rating-summary__score strong {
+  color: var(--ink-primary-deep);
+  font-size: 2.7rem;
+  line-height: 1;
+}
+
+.rating-summary__score span,
+.rating-summary > p {
+  color: var(--ink-text-muted);
+}
+
+.rating-summary > p {
+  margin: 0.35rem 0 1rem;
+  font-size: 0.8rem;
+}
+
+.rating-breakdown {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.rating-breakdown__row {
+  display: grid;
+  grid-template-columns: 34px minmax(70px, 1fr) 32px;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink-text-muted);
+  font-size: 0.72rem;
+}
+
+.rating-breakdown__row > div {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ink-border-soft);
+}
+
+.rating-breakdown__row i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink-rating);
+}
+
+.review-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-surface);
+}
+
+.review-form > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.review-form label {
+  color: var(--ink-primary-deep);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.review-form__rating.MuiRating-root {
+  font-size: 2.8rem;
+}
+
+.review-form__actions,
+.review-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.review-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.review-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--ink-shadow) 65%, transparent);
+}
+
+.review-avatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--ink-background-warm);
+  color: var(--ink-primary-deep);
+  font-size: 0.82rem;
+  font-weight: 800;
+  place-items: center;
+}
+
+.review-avatar svg {
+  width: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.review-card__meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.review-card__meta > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.review-card__meta strong {
+  overflow-wrap: anywhere;
+  font-size: 0.86rem;
+}
+
+.review-card__meta time {
+  color: var(--ink-text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.review-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.review-card__body > p {
+  margin: 0.65rem 0 0;
+  line-height: 1.65;
+}
+
+.reviews-empty {
+  margin: 0;
+  padding: 2rem;
+  border: 1px solid var(--ink-border-soft);
+  background: var(--ink-surface);
+  color: var(--ink-text-muted);
+  text-align: center;
+}
+
+.review-dialog .MuiDialog-paper {
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 18px 50px var(--ink-shadow);
+}
+
+.review-dialog__title.MuiDialogTitle-root {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem 0.75rem;
+}
+
+.review-dialog__title h2,
+.review-dialog__title p {
+  margin: 0;
+}
+
+.review-dialog__title h2 {
+  color: var(--ink-primary-deep);
+  font-size: 1.55rem;
+  font-weight: 400;
+}
+
+.review-dialog__title p {
+  margin-top: 0.25rem;
+  color: var(--ink-text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.review-dialog__title svg {
+  width: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.review-dialog .MuiDialogContent-root {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.review-dialog .review-form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.library-pagination.MuiPagination-root {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.library-page {
+  min-height: calc(100vh - 114px);
+  padding-block: clamp(3.5rem, 7vw, 6rem);
+}
+
+.auth-page {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  padding-block: clamp(3rem, 8vw, 6rem);
+  place-items: center;
+}
+
+.auth-card.MuiPaper-root {
+  width: min(100%, 470px);
+  padding: clamp(1.5rem, 5vw, 2.75rem);
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  box-shadow: 0 18px 46px var(--ink-shadow);
+}
+
+.auth-card h1 {
+  margin: 0;
+  color: var(--ink-primary-deep);
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.auth-card > p {
+  margin: 0.7rem 0 1.5rem;
+  color: var(--ink-text-muted);
+  line-height: 1.6;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.auth-form .MuiButton-root {
+  min-height: 46px;
+}
+
+.auth-switch a {
+  color: var(--ink-accent-dark);
+  font-weight: 700;
+}
+
+.auth-powered {
+  margin: 1.5rem 0 0 !important;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ink-border-soft);
+  color: var(--ink-text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.library-page__header {
+  margin-bottom: 2rem;
+}
+
+.library-page__header p {
+  margin: 0.7rem 0 0;
+}
+
+.library-empty-state {
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid var(--ink-border-soft);
+  border-radius: var(--card-radius);
+  background: var(--ink-surface);
+  text-align: center;
+}
+
+.library-empty-state h2 {
+  margin: 0;
+  color: var(--ink-primary-deep);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.library-empty-state p {
+  margin: 0.7rem 0 1.5rem;
+  color: var(--ink-text-muted);
+}
+
+.site-footer {
+  border-top: 1px solid color-mix(in srgb, var(--ink-border) 38%, transparent);
+  padding: 1.35rem 1rem;
+  background: var(--ink-surface);
+  color: var(--ink-text-muted);
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.not-found-page {
+  display: flex;
+  min-height: calc(100vh - 114px);
+  background-color: #ead8c8;
+  background-image: url('/Cozy%20Cat%20Nap%20and%20Coffee%20Bookshelf.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.not-found-page__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+  align-items: center;
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.not-found-page__content {
+  grid-column: 2;
+}
+
+.not-found-page__content h1 {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--ink-primary-deep);
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.not-found-page__content h1 span {
+  font-size: clamp(6rem, 13vw, 10rem);
+  line-height: 0.9;
+  margin-bottom: 0.35rem;
+}
+
+.not-found-page__content p {
+  max-width: 30rem;
+  margin: 1.6rem 0 2rem;
+  color: var(--ink-text-muted);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  line-height: 1.65;
+}
+
+.not-found-page__content .MuiButton-root {
+  min-width: 150px;
+}
+
+@media (max-width: 899px) {
+  .desktop-nav {
+    display: none;
+  }
+
+  .site-header__actions {
+    margin-left: auto;
+  }
+
+  .mobile-menu-button.MuiIconButton-root {
+    display: inline-flex;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .book-details-hero,
+  .details-loading {
+    grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+}
+
+@media (max-width: 599px) {
+  .page-container {
+    width: min(100% - 1.15rem, 1180px);
+  }
+
+  .site-header.MuiAppBar-root {
+    padding-top: 0;
+  }
+
+  .site-header__inner.MuiToolbar-root {
+    min-height: 54px;
+    padding-inline: 0.75rem;
+    border-radius: 0;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .brand-mark {
+    width: 32px;
+  }
+
+  .header-icon-button.MuiIconButton-root {
+    width: 38px;
+    height: 38px;
+  }
+
+  .hero-section {
+    min-height: 590px;
+    background-position: 62% center;
+  }
+
+  .hero-copy {
+    padding: 2rem 1.25rem;
+    background: rgba(255, 255, 255, 0.84);
+  }
+
+  .hero-copy h1 {
+    max-width: none;
+    font-size: clamp(2.8rem, 15vw, 4.2rem);
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-actions .MuiButton-root {
+    align-self: flex-start;
+    width: auto;
+  }
+
+  .section-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .book-card {
+    padding: 0.5rem 0.5rem 0.8rem;
+  }
+
+  .book-card__title {
+    font-size: 0.93rem;
+  }
+
+  .library-button.MuiIconButton-root {
+    width: 34px;
+    height: 34px;
+  }
+
+  .catalog-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(150px, 1fr);
+    align-self: auto;
+    gap: 1rem;
+    margin-top: 0;
+    padding: 1rem;
+    border: 1px solid var(--ink-border-soft);
+    background: var(--ink-surface);
+  }
+
+  .filter-group {
+    margin-bottom: 0;
+  }
+
+  .book-details-hero,
+  .details-loading {
+    grid-template-columns: 1fr;
+  }
+
+  .book-details-cover {
+    width: min(74vw, 320px);
+    margin-inline: auto;
+  }
+
+  .book-details-title-row,
+  .reviews-section__heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .book-details-title-row .MuiButton-root {
+    align-self: flex-start;
+  }
+
+  .reviews-section {
+    margin-left: 0;
+  }
+
+  .reviews-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-summary {
+    max-width: none;
+  }
+
+}
+
+@media (max-width: 430px) {
+  .catalog-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .book-facts {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .review-card {
+    grid-template-columns: 1fr;
+  }
+
+  .review-card__meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 749px) {
+  .not-found-page {
+    background-position: 28% center;
+    text-align: center;
+  }
+
+  .not-found-page__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .not-found-page__content {
+    display: flex;
+    grid-column: 1;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+}
