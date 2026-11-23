@@ -1,22 +1,21 @@
 import { createBrowserRouter } from 'react-router'
+import { LoginPage, RegisterPage } from '../features/auth/AuthPage'
 import { ProtectedRoute } from '../features/auth/ProtectedRoute'
+import { BookDetailsPage } from '../features/books/BookDetailsPage'
+import { CatalogPage } from '../features/books/CatalogPage'
 import { HomePage } from '../features/home/HomePage'
+import { MyLibraryPage } from '../features/library/MyLibraryPage'
+import { NotFoundPage } from '../shared/components/NotFoundPage'
 import { MainLayout } from '../shared/layouts/MainLayout'
 
 export const router = createBrowserRouter([
   {
     path: 'login',
-    lazy: async () => {
-      const { LoginPage } = await import('../features/auth/AuthPage')
-      return { Component: LoginPage }
-    },
+    element: <LoginPage />,
   },
   {
     path: 'register',
-    lazy: async () => {
-      const { RegisterPage } = await import('../features/auth/AuthPage')
-      return { Component: RegisterPage }
-    },
+    element: <RegisterPage />,
   },
   {
     element: <ProtectedRoute />,
@@ -27,31 +26,19 @@ export const router = createBrowserRouter([
           { index: true, element: <HomePage /> },
           {
             path: 'books',
-            lazy: async () => {
-              const { CatalogPage } = await import('../features/books/CatalogPage')
-              return { Component: CatalogPage }
-            },
+            element: <CatalogPage />,
           },
           {
             path: 'books/:id',
-            lazy: async () => {
-              const { BookDetailsPage } = await import('../features/books/BookDetailsPage')
-              return { Component: BookDetailsPage }
-            },
+            element: <BookDetailsPage />,
           },
           {
             path: 'my-library',
-            lazy: async () => {
-              const { MyLibraryPage } = await import('../features/library/MyLibraryPage')
-              return { Component: MyLibraryPage }
-            },
+            element: <MyLibraryPage />,
           },
           {
             path: '*',
-            lazy: async () => {
-              const { NotFoundPage } = await import('../shared/components/NotFoundPage')
-              return { Component: NotFoundPage }
-            },
+            element: <NotFoundPage />,
           },
         ],
       },
