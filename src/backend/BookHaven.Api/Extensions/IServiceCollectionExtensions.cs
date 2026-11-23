@@ -1,9 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BookHaven.Api.Configuration;
-using BookHaven.Api.Services;
 using BookHaven.Application.Interfaces;
+using BookHaven.Application.Security;
 using BookHaven.Application.Services;
 using BookHaven.Persistence;
 using BookHaven.Persistence.Repositories;
@@ -19,13 +18,14 @@ public static class IServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        JwtSettings jwt = configuration.GetJwtSettings();
+        JwtTokenOptions jwt = configuration.GetJwtTokenOptions();
 
         services.AddDbContext<BookHavenDbContext>(options =>
-            options.UseSqlite(configuration.GetBookHavenConnectionString()));
+            options.UseNpgsql(configuration.GetBookHavenConnectionString()));
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddSingleton(jwt);
+        services.AddSingleton<ITokenService, JwtTokenService>();
         services.AddScoped<IBookService, BookService>();
 
         services

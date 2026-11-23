@@ -9,7 +9,7 @@ reviews for a book.
 
 - React, Vite, TypeScript, React Router, React Query, and Axios
 - Material UI and Tailwind CSS
-- ASP.NET Core 10, EF Core, and SQLite
+- ASP.NET Core 10, EF Core, and PostgreSQL through Npgsql
 - JWT bearer authentication with PBKDF2 password hashes
 - xUnit unit tests
 
@@ -90,6 +90,18 @@ The catalog accepts `search`, `genre`, `sort`, `isFeatured`, `favouritesOnly`,
 `page`, and `pageSize`.
 
 ## Run locally
+
+Configure the PostgreSQL connection as a user secret before starting the API:
+
+```powershell
+cd src/backend
+dotnet user-secrets set --project BookHaven.Api `
+  "ConnectionStrings:BookHaven" `
+  "Host=localhost;Port=5432;Database=bookhaven;Username=postgres;Password=YOUR_PASSWORD"
+```
+
+The connection string is intentionally not committed to `appsettings.json`.
+`ConnectionStrings__BookHaven` may be used as an environment-variable override.
 
 From VS Code, run the `BookHaven: Start Full Stack` task. It starts the React
 frontend and ASP.NET Core API in parallel, then opens Swagger UI.

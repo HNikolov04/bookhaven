@@ -12,6 +12,8 @@
 
 - There is no Infrastructure project.
 - `BookService` is the single application service.
+- `JwtTokenService` and its typed options live in Application; Api only reads
+  configuration and registers them.
 - `BooksController` owns authenticated book/favourite/review endpoints.
 - `UsersController` owns register/login.
 - `BaseController` exposes shared authenticated-user helpers.
@@ -63,14 +65,15 @@ ApiDto <-> Application DTO <-> Repository DTO <-> Entity
 
 ## EF Core
 
-- SQLite is the development provider.
+- PostgreSQL is the only database provider and is configured through Npgsql.
+- Database credentials are supplied through user secrets or environment
+  variables and are never committed.
 - Every entity has an `IEntityTypeConfiguration<T>` file.
 - Configure keys, indexes, lengths, relationships, conversions, and delete
   behavior explicitly.
 - Genre values are stored as strings in `BookGenres`.
 - Review changes recalculate book average stars and vote count.
-- The `(BookId, UserId)` review index is non-unique. Startup schema preparation
-  replaces the legacy unique SQLite index for existing coursework databases.
+- The `(BookId, UserId)` review index is non-unique.
 - Startup seeding normalizes existing rating summaries from stored reviews
   without deleting user data.
 - The coursework setup uses `EnsureCreated`; use migrations when schema history

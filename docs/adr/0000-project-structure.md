@@ -35,6 +35,10 @@ Users contain email and password hash only. Registration/login use PBKDF2 and a
 two-hour JWT. All book routes require authentication; only register/login are
 anonymous.
 
+PostgreSQL is the sole persistence provider through Npgsql. JWT creation and
+its typed configuration model live in Application; Api remains responsible for
+reading configuration and configuring bearer-token validation.
+
 DTO transfer remains explicit:
 
 ```text
@@ -56,6 +60,8 @@ menu. Favourites are server state queried with React Query.
 - Email is the only displayed user identity.
 - Multiple genres remain strongly typed without a Genre lookup table.
 - Persisted rating summaries require recalculation after review writes.
+- Local development requires a PostgreSQL connection string supplied outside
+  source control.
 - LocalStorage JWT is intentionally simple but less hardened than HttpOnly
   cookies; production keys must not be committed.
 - The explicit DTO-per-boundary approach is repetitive but easy to explain.

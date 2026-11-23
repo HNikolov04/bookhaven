@@ -3,26 +3,22 @@ using System.Security.Claims;
 using System.Text;
 using BookHaven.Application.Dtos;
 using BookHaven.Application.Interfaces;
+using BookHaven.Application.Security;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BookHaven.Api.Services;
+namespace BookHaven.Application.Services;
 
 public sealed class JwtTokenService : ITokenService
 {
-    private readonly IConfiguration configuration;
+    private readonly JwtTokenOptions options;
 
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenService(JwtTokenOptions options)
     {
-        this.configuration = configuration;
+        this.options = options;
     }
 
     public string CreateToken(UserDto user)
     {
-        string key = configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("JWT key is not configured.");
-        string issuer = configuration["Jwt:Issuer"] ?? "BookHaven.Api";
-        string audience = configuration["Jwt:Audience"] ?? "BookHaven.Frontend";
-
         Claim[] claims =
         [
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -31,12 +27,12 @@ public sealed class JwtTokenService : ITokenService
         ];
 
         SigningCredentials credentials = new(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
             SecurityAlgorithms.HmacSha256);
 
         JwtSecurityToken token = new(
-            issuer,
-            audience,
+            options.Issuer,
+            options.Audience,
             claims,
             expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: credentials);

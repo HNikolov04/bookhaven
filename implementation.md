@@ -79,13 +79,16 @@
   retaining Cancel as the secondary text-button style.
 - [x] Enlarged the review-entry stars and changed the profile avatar background
   to neutral gray.
-- [x] Normalized the existing SQLite rating summaries from local review rows so
-  legacy imported totals are removed without deleting user data.
-- [x] Allowed multiple reviews by the same user for one book by replacing the
-  legacy unique review index with a non-unique index at startup.
+- [x] Normalized rating summaries from local review rows so imported totals are
+  not carried into the PostgreSQL database.
+- [x] Allowed multiple reviews by the same user for one book through a
+  non-unique `(BookId, UserId)` index.
 - [x] Made the reviews-section action always add a blank review while each
   owned review retains independent Edit/Delete controls.
 - [x] Removed hover movement from the profile control.
+- [x] Moved `JwtTokenService` and typed JWT options from Api to Application.
+- [x] Replaced the SQLite provider and fallback connection with PostgreSQL via
+  Npgsql; database credentials now come from user secrets or environment.
 
 ## Current schema
 

@@ -1,4 +1,4 @@
-using BookHaven.Api.Configuration;
+using BookHaven.Application.Security;
 
 namespace BookHaven.Api.Extensions;
 
@@ -7,10 +7,11 @@ public static class IConfigurationExtensions
     public static string GetBookHavenConnectionString(this IConfiguration configuration)
     {
         return configuration.GetConnectionString("BookHaven")
-            ?? "Data Source=bookhaven.db";
+            ?? throw new InvalidOperationException(
+                "ConnectionStrings:BookHaven is required.");
     }
 
-    public static JwtSettings GetJwtSettings(this IConfiguration configuration)
+    public static JwtTokenOptions GetJwtTokenOptions(this IConfiguration configuration)
     {
         string key = configuration["Jwt:Key"]
             ?? throw new InvalidOperationException("Jwt:Key is required.");
@@ -19,7 +20,7 @@ public static class IConfigurationExtensions
             throw new InvalidOperationException("Jwt:Key must contain at least 32 bytes.");
         }
 
-        return new JwtSettings(
+        return new JwtTokenOptions(
             key,
             configuration["Jwt:Issuer"] ?? "BookHaven.Api",
             configuration["Jwt:Audience"] ?? "BookHaven.Frontend");
