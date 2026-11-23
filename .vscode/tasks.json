@@ -1,3 +1,88 @@
 {
-  
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "BookHaven: Build Backend",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/backend/BookHaven.Api/BookHaven.Api.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "BookHaven: Backend",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/src/backend/BookHaven.Api/BookHaven.Api.csproj",
+        "--launch-profile",
+        "https"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "base": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*Building.*$",
+          "endsPattern": "^.*Now listening on:.*$"
+        }
+      },
+      "presentation": {
+        "group": "bookhaven",
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "BookHaven: Frontend",
+      "type": "npm",
+      "script": "dev",
+      "path": "src/frontend",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^(?!)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*VITE.*$",
+          "endsPattern": "^.*Local:.*$"
+        }
+      },
+      "presentation": {
+        "group": "bookhaven",
+        "panel": "dedicated",
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "BookHaven: Open Swagger",
+      "type": "process",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$uri = 'http://localhost:5000/swagger/index.html'; for ($attempt = 0; $attempt -lt 120; $attempt++) { try { Invoke-WebRequest -Uri $uri -UseBasicParsing | Out-Null; Start-Process $uri; exit 0 } catch { Start-Sleep -Seconds 1 } }; Write-Error 'Swagger did not become ready within 120 seconds.'; exit 1"
+      ],
+      "presentation": {
+        "reveal": "never"
+      }
+    },
+    {
+      "label": "BookHaven: Start Full Stack",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "BookHaven: Backend",
+        "BookHaven: Frontend",
+        "BookHaven: Open Swagger"
+      ],
+      "problemMatcher": []
+    }
+  ]
 }
