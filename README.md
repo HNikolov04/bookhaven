@@ -39,7 +39,7 @@ bookhaven/
 |-- src/
 |   |-- frontend/
 |   |   `-- src/
-|   |       |-- app/         Router and application providers
+|   |       |-- app/         Application composition and router
 |   |       |-- features/    Auth, books, home, and library features
 |   |       `-- shared/      API client, reusable UI, layout, and styles
 |   `-- backend/
