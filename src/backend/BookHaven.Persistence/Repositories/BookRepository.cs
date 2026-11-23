@@ -139,10 +139,7 @@ public sealed class BookRepository : IBookRepository
     {
         Book? book = await dbContext.Books.FindAsync([bookId], cancellationToken);
         User? user = await dbContext.Users.FindAsync([userId], cancellationToken);
-        bool alreadyReviewed = await dbContext.Reviews.AnyAsync(
-            review => review.BookId == bookId && review.UserId == userId,
-            cancellationToken);
-        if (book is null || user is null || alreadyReviewed)
+        if (book is null || user is null)
         {
             return null;
         }
@@ -161,11 +158,7 @@ public sealed class BookRepository : IBookRepository
 
         dbContext.Reviews.Add(review);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await ApplyRatingChangeAsync(
-            bookId,
-            voteChange: 1,
-            starsChange: command.Stars,
-            cancellationToken: cancellationToken);
+        await RecalculateRatingAsync(bookId, cancellationToken);
         return ToRepositoryDto(review);
     }
 
@@ -185,15 +178,10 @@ public sealed class BookRepository : IBookRepository
             return null;
         }
 
-        int previousStars = review.Stars;
         review.Text = command.Text;
         review.Stars = command.Stars;
         await dbContext.SaveChangesAsync(cancellationToken);
-        await ApplyRatingChangeAsync(
-            review.BookId,
-            voteChange: 0,
-            starsChange: command.Stars - previousStars,
-            cancellationToken: cancellationToken);
+        await RecalculateRatingAsync(review.BookId, cancellationToken);
         return ToRepositoryDto(review);
     }
 
@@ -211,14 +199,9 @@ public sealed class BookRepository : IBookRepository
         }
 
         Guid bookId = review.BookId;
-        int removedStars = review.Stars;
         dbContext.Reviews.Remove(review);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await ApplyRatingChangeAsync(
-            bookId,
-            voteChange: -1,
-            starsChange: -removedStars,
-            cancellationToken: cancellationToken);
+        await RecalculateRatingAsync(bookId, cancellationToken);
         return true;
     }
 
@@ -234,10 +217,8 @@ public sealed class BookRepository : IBookRepository
             .Include(book => book.FavouritedBy);
     }
 
-    private async Task ApplyRatingChangeAsync(
+    private async Task RecalculateRatingAsync(
         Guid bookId,
-        int voteChange,
-        int starsChange,
         CancellationToken cancellationToken)
     {
         Book? book = await dbContext.Books.FindAsync([bookId], cancellationToken);
@@ -246,14 +227,16 @@ public sealed class BookRepository : IBookRepository
             return;
         }
 
-        decimal totalStars = (book.AverageStars * book.RatingVotes) + starsChange;
-        book.RatingVotes = Math.Max(0, book.RatingVotes + voteChange);
+        IQueryable<Review> reviews = dbContext.Reviews.Where(
+            review => review.BookId == bookId);
+        book.RatingVotes = await reviews.CountAsync(cancellationToken);
         book.AverageStars = book.RatingVotes == 0
             ? 0
-            : Math.Clamp(
-                Math.Round(totalStars / book.RatingVotes, 2),
-                0,
-                5);
+            : Math.Round(
+                await reviews.AverageAsync(
+                    review => (decimal)review.Stars,
+                    cancellationToken),
+                2);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

@@ -13,7 +13,7 @@ public sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(review => review.Text).HasMaxLength(2_000).IsRequired();
         builder.Property(review => review.Stars).IsRequired();
         builder.Property(review => review.CreatedAtUtc).IsRequired();
-        builder.HasIndex(review => new { review.BookId, review.UserId }).IsUnique();
+        builder.HasIndex(review => new { review.BookId, review.UserId });
         builder.HasOne(review => review.Book)
             .WithMany(book => book.Reviews)
             .HasForeignKey(review => review.BookId)

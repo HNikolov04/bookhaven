@@ -81,6 +81,11 @@
   to neutral gray.
 - [x] Normalized the existing SQLite rating summaries from local review rows so
   legacy imported totals are removed without deleting user data.
+- [x] Allowed multiple reviews by the same user for one book by replacing the
+  legacy unique review index with a non-unique index at startup.
+- [x] Made the reviews-section action always add a blank review while each
+  owned review retains independent Edit/Delete controls.
+- [x] Removed hover movement from the profile control.
 
 ## Current schema
 

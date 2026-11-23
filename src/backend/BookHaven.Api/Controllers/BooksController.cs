@@ -85,7 +85,7 @@ public sealed class BooksController : BaseController
                 request.ToApplicationDto(),
                 cancellationToken);
             return review is null
-                ? Conflict(new ProblemDetails { Detail = "The book is missing or you already reviewed it." })
+                ? NotFound(new ProblemDetails { Detail = "The book could not be found." })
                 : Created($"/api/books/{bookId}", review.ToApiDto());
         }
         catch (ArgumentException exception)

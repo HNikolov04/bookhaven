@@ -121,6 +121,7 @@ export function BookDetailsPage() {
   const updateReview = useUpdateReviewMutation()
   const deleteReview = useDeleteReviewMutation()
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false)
+  const [editingReviewId, setEditingReviewId] = useState<string>()
   const [reviewError, setReviewError] = useState<string>()
 
   if (bookQuery.isPending) {
@@ -148,7 +149,9 @@ export function BookDetailsPage() {
   }
 
   const book = bookQuery.data
-  const ownReview = book.reviews.find((review) => review.userId === auth.user?.id)
+  const editingReview = book.reviews.find(
+    (review) => review.id === editingReviewId && review.userId === auth.user?.id,
+  )
   const isSavingReview = addReview.isPending || updateReview.isPending
   const reviewCount = book.reviews.length
   const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => {
@@ -159,7 +162,14 @@ export function BookDetailsPage() {
     }
   })
 
-  function openReviewDialog() {
+  function openNewReviewDialog() {
+    setEditingReviewId(undefined)
+    setReviewError(undefined)
+    setIsReviewDialogOpen(true)
+  }
+
+  function openEditReviewDialog(reviewId: string) {
+    setEditingReviewId(reviewId)
     setReviewError(undefined)
     setIsReviewDialogOpen(true)
   }
@@ -167,8 +177,8 @@ export function BookDetailsPage() {
   async function saveReview(review: SaveReviewRequest) {
     setReviewError(undefined)
     try {
-      if (ownReview) {
-        await updateReview.mutateAsync({ reviewId: ownReview.id, ...review })
+      if (editingReview) {
+        await updateReview.mutateAsync({ reviewId: editingReview.id, ...review })
       } else {
         await addReview.mutateAsync({ bookId: book.id, ...review })
       }
@@ -262,11 +272,11 @@ export function BookDetailsPage() {
           <h2 id="reviews-heading">Reviews ({reviewCount})</h2>
           <Button
             color="secondary"
-            onClick={openReviewDialog}
+            onClick={openNewReviewDialog}
             startIcon={<PencilIcon />}
             variant="contained"
           >
-            {ownReview ? 'Edit your review' : 'Write a review'}
+            Add a review
           </Button>
         </div>
 
@@ -320,7 +330,7 @@ export function BookDetailsPage() {
                       <div className="review-card__actions">
                         <Button
                           color="secondary"
-                          onClick={openReviewDialog}
+                          onClick={() => openEditReviewDialog(review.id)}
                           size="small"
                           variant="contained"
                         >
@@ -355,7 +365,7 @@ export function BookDetailsPage() {
       >
         <DialogTitle className="review-dialog__title" id="review-dialog-title">
           <div>
-            <h2>{ownReview ? 'Edit your review' : 'Write a review'}</h2>
+            <h2>{editingReview ? 'Edit your review' : 'Write a review'}</h2>
             <p>Share your thoughts about {book.title} with other readers.</p>
           </div>
           <IconButton
@@ -369,11 +379,11 @@ export function BookDetailsPage() {
         <DialogContent>
           <ReviewForm
             error={reviewError}
-            initialValue={ownReview
-              ? { stars: ownReview.stars, text: ownReview.text }
+            initialValue={editingReview
+              ? { stars: editingReview.stars, text: editingReview.text }
               : undefined}
             isSaving={isSavingReview}
-            key={ownReview?.id ?? 'new-review'}
+            key={editingReview?.id ?? 'new-review'}
             onCancel={() => setIsReviewDialogOpen(false)}
             onSubmit={saveReview}
           />

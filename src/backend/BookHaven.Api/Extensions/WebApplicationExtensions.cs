@@ -1,5 +1,6 @@
 using BookHaven.Persistence;
 using BookHaven.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHaven.Api.Extensions;
 
@@ -22,6 +23,7 @@ public static class WebApplicationExtensions
             BookHavenDbContext dbContext =
                 scope.ServiceProvider.GetRequiredService<BookHavenDbContext>();
             await dbContext.Database.EnsureCreatedAsync();
+            await EnsureReviewIndexAllowsMultipleEntriesAsync(dbContext);
             await BookHavenSeeder.SeedAsync(dbContext);
         }
 
@@ -31,5 +33,15 @@ public static class WebApplicationExtensions
         app.MapControllers();
 
         return app;
+    }
+
+    private static async Task EnsureReviewIndexAllowsMultipleEntriesAsync(
+        BookHavenDbContext dbContext)
+    {
+        await dbContext.Database.ExecuteSqlRawAsync(
+            "DROP INDEX IF EXISTS \"IX_Reviews_BookId_UserId\";");
+        await dbContext.Database.ExecuteSqlRawAsync(
+            "CREATE INDEX IF NOT EXISTS \"IX_Reviews_BookId_UserId\" " +
+            "ON \"Reviews\" (\"BookId\", \"UserId\");");
     }
 }

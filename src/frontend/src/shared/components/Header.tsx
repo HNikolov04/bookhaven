@@ -107,6 +107,7 @@ export function Header() {
             aria-expanded={profileAnchor ? 'true' : undefined}
             aria-haspopup="menu"
             aria-label="Open profile menu"
+            className="profile-button"
             onClick={handleProfileOpen}
             size="small"
           >

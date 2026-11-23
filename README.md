@@ -2,8 +2,8 @@
 
 BookHaven is a university digital-library application built with React and a
 .NET 10 Web API. The entire application requires an authenticated user. Users
-can browse books, view reviews, save favourite books, and write one review per
-book.
+can browse books, view reviews, save favourite books, and write multiple
+reviews for a book.
 
 ## Stack
 

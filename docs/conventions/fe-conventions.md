@@ -18,6 +18,7 @@
 - `ProtectedRoute` guards the entire application layout.
 - Store JWT and email-only user under `bookhaven.auth.v1`.
 - The header shows a neutral default-person avatar at the top right.
+- The profile control does not move on hover.
 - The clean profile dropdown displays email and a spaced Logout action.
 - Desktop and mobile navigation use underline-only hover and active states.
 - Never store passwords.
@@ -32,6 +33,9 @@
 - The catalogue uses one responsive card grid; do not add a list-view toggle.
 - Reviews are server-backed and displayed below the full book summary.
 - Review forms contain only rating and text; identity comes from the JWT user.
+- The reviews-section action always starts a blank new review. Edit/Delete
+  actions target the individual review card, and a user may add multiple
+  reviews for the same book.
 - Display `0.0 / 5` and `0 ratings` until a BookHaven user submits a review;
   never substitute ratings from an external catalogue.
 - Treat API `Guid` identifiers as opaque strings in TypeScript and URLs.

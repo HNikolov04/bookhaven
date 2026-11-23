@@ -35,7 +35,8 @@
 - A book without BookHaven reviews has `AverageStars = 0` and
   `RatingVotes = 0`.
 - Each review has `BookId`, `UserId`, text, stars, and `CreatedAtUtc`.
-- One user can review a given book once.
+- One user can create multiple reviews for the same book. Each review keeps its
+  own GUID and is edited or deleted independently.
 - Users have email and password hash only; there is no username.
 - Favourites use `UserFavouriteBook` with `(UserId, BookId)` as the key.
 
@@ -68,6 +69,8 @@ ApiDto <-> Application DTO <-> Repository DTO <-> Entity
   behavior explicitly.
 - Genre values are stored as strings in `BookGenres`.
 - Review changes recalculate book average stars and vote count.
+- The `(BookId, UserId)` review index is non-unique. Startup schema preparation
+  replaces the legacy unique SQLite index for existing coursework databases.
 - Startup seeding normalizes existing rating summaries from stored reviews
   without deleting user data.
 - The coursework setup uses `EnsureCreated`; use migrations when schema history

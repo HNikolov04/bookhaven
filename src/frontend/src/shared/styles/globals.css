@@ -419,6 +419,10 @@ img {
   background: transparent;
 }
 
+.profile-button.MuiIconButton-root:hover {
+  transform: none;
+}
+
 .hero-section {
   display: flex;
   min-height: clamp(500px, 54vw, 690px);
